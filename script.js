@@ -8,19 +8,6 @@ function openScreen(type){
     screen.classList.remove("active");
   });
 
-  // 📅 CALENDARIO
-  if(type === "calendar"){
-    const cal = document.getElementById("calendarScreen");
-    if(cal) cal.classList.add("active");
-    return;
-  }
-
-  // 📂 DRIVE (sale de la app)
-  if(type === "drive"){
-  window.location.replace("https://1drv.ms/f/c/55b6a939d4276db6/IgC0lYRLCSV9RpVYk3zc2vS3AfivHxtZwoq3bszrudWQqbw");
-  return;
-}
-
   // 🌐 URLs internas
   const urls = {
     basicos: "https://josemanueljaimemorales.github.io/BASICOSBKA/"
