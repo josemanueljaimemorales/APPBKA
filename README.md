@@ -1,0 +1,1 @@
+Versión PREMIUM con animaciones, UX tipo app y diseño avanzado.
