@@ -17,7 +17,7 @@ function openScreen(type){
 
   // 📂 DRIVE (sale de la app)
   if(type === "drive"){
-  window.location.replace("https://1drv.ms/f/c/55b6a939d4276db6/IgC0lYRLCSV9RpVYk3zc2vS3AfivHxtZwoq3bszrudWQqbw");
+  window.location.replace("https://1drv.ms/f/c/55b6a939d4276db6/IgDxmPmdRMJ_RIAg23Wl3xAUAUXbSrEx5qf2YvjdYjuyFto");
   return;
 }
 
@@ -27,8 +27,6 @@ function openScreen(type){
     SISTEMAS: "https://josemanueljaimemorales.github.io/Sistemas-AKC/",
     fuerza: "https://josemanueljaimemorales.github.io/AKC-CON-REPORTE/",
     FuerzaFIG: "https://josemanueljaimemorales.github.io/FUERZAFIG/",
-    rutinas: "https://josemanueljaimemorales.github.io/RutinasAKC/",
-    trabajo: "https://josemanueljaimemorales.github.io/TRABAJOGAVAKC/",
     basicos: "https://josemanueljaimemorales.github.io/Basicos_AKC/"
   };
 
