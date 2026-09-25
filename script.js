@@ -8,9 +8,28 @@ function openScreen(type){
     screen.classList.remove("active");
   });
 
+  // 📅 CALENDARIO
+  if(type === "calendar"){
+    const cal = document.getElementById("calendarScreen");
+    if(cal) cal.classList.add("active");
+    return;
+  }
+
+  // 📂 DRIVE (sale de la app)
+  if(type === "drive"){
+  window.location.replace("https://1drv.ms/f/c/55b6a939d4276db6/IgC0lYRLCSV9RpVYk3zc2vS3AfivHxtZwoq3bszrudWQqbw");
+  return;
+}
+
   // 🌐 URLs internas
   const urls = {
-    basicos: "https://josemanueljaimemorales.github.io/BASICOSBKA/"
+    cargas: "https://josemanueljaimemorales.github.io/Cargas-sistemas-y-fuerzas/",
+    SISTEMAS: "https://josemanueljaimemorales.github.io/Sistemas-AKC/",
+    fuerza: "https://josemanueljaimemorales.github.io/AKC-CON-REPORTE/",
+    FuerzaFIG: "https://josemanueljaimemorales.github.io/FUERZAFIG/",
+    rutinas: "https://josemanueljaimemorales.github.io/RutinasAKC/",
+    trabajo: "https://josemanueljaimemorales.github.io/TRABAJOGAVAKC/",
+    basicos: "https://josemanueljaimemorales.github.io/Basicos_AKC/"
   };
 
   const frame = document.getElementById("viewerFrame");
