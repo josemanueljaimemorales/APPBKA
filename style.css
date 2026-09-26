@@ -1,126 +1,210 @@
-/* 🔥 RESET GENERAL */
-body{
-  margin:0;
-  font-family:'Segoe UI', sans-serif;
-  background:radial-gradient(circle at top,#1e3a8a,#020617);
-  color:white;
-  overflow:hidden;
+/* BKA — ESTÉTICA VANGUARDISTA / SOLO PRESENTACIÓN */
+:root{
+  --ink:#10152a;
+  --deep:#07111f;
+  --cyan:#08b7c8;
+  --blue:#1677ff;
+  --magenta:#e60078;
+  --purple:#7d2ccf;
+  --orange:#ff7a00;
+  --lime:#6bd32d;
+  --gold:#f3bd24;
+  --glass:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.16);
 }
 
-/* 📱 CONTENEDOR APP */
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  color:#fff;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 12%,rgba(8,183,200,.22),transparent 28%),
+    radial-gradient(circle at 88% 18%,rgba(230,0,120,.18),transparent 27%),
+    radial-gradient(circle at 78% 90%,rgba(255,122,0,.16),transparent 30%),
+    linear-gradient(135deg,#050914 0%,#0b1225 48%,#10162a 100%);
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  width:58vw;height:58vw;max-width:720px;max-height:720px;
+  border:1px solid rgba(8,183,200,.12);
+  border-radius:50%;
+  left:-25vw;bottom:-28vw;
+  box-shadow:0 0 90px rgba(8,183,200,.08),inset 0 0 80px rgba(230,0,120,.04);
+  pointer-events:none;
+}
+body::after{
+  content:"";
+  position:fixed;
+  width:42vw;height:42vw;max-width:520px;max-height:520px;
+  border:1px solid rgba(255,122,0,.10);
+  border-radius:50%;
+  right:-18vw;top:-20vw;
+  pointer-events:none;
+}
+
 #app{
-  width:100%;
-  max-width:420px;
+  width:min(100%,980px);
   height:100vh;
   margin:0 auto;
   position:relative;
   overflow:hidden;
 }
 
-/* 📺 PANTALLAS */
 .screen{
   display:none;
   position:absolute;
-  top:0;
-  left:0;
+  inset:0;
   width:100%;
   height:100%;
-  padding:20px 16px;
-  box-sizing:border-box;
+  padding:28px;
 }
-
-/* 🔥 SOLO LA ACTIVA */
 .screen.active{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:flex-start; /* 🔥 antes center */
-}
-
-/* 🧩 HEADER */
-.header{
-  text-align:center;
-  margin-top:40px; /* 🔥 separación arriba */
-  margin-bottom:20px;
-}
-
-.logo{
-  width:80px;
-  max-width:60%;
-  margin-bottom:6px;
-}
-
-h1{
-  font-size:18px;
-  margin:0;
-}
-
-/* 📋 MENÚ */
-.menu{
-  width:100%;
-  max-width:300px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-/* 🔘 BOTONES */
-.btn{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:14px;
-  font-size:14px;
-  color:white;
-  background:linear-gradient(145deg,#3b82f6,#1d4ed8);
-  box-shadow:0 6px 15px rgba(0,0,0,.4);
-  cursor:pointer;
-  transition:.15s;
-}
-
-.btn:active{
-  transform:scale(0.97);
-}
-
-/* 🎨 VARIANTES */
-.cargas{
-  background:linear-gradient(145deg,#ef4444,#7f1d1d);
-}
-
-.calendar-btn{
-  background:linear-gradient(145deg,#22c55e,#15803d);
-}
-
-.drive{
-  background:linear-gradient(145deg,#f59e0b,#d97706);
-}
-
-/* 📺 VIEWER */
-#viewerScreen{
   justify-content:flex-start;
-  padding-top:50px;
 }
 
-/* iframe */
-iframe{
+/* HOME */
+#home{overflow:auto;padding-bottom:42px}
+.header{
+  width:min(100%,760px);
+  text-align:center;
+  margin-top:clamp(18px,5vh,52px);
+  margin-bottom:30px;
+  position:relative;
+}
+.header::after{
+  content:"";
+  display:block;
+  width:90px;height:3px;
+  margin:17px auto 0;
+  border-radius:99px;
+  background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--orange));
+  box-shadow:0 0 18px rgba(8,183,200,.35);
+}
+.logo{
+  width:150px;
+  max-width:58vw;
+  height:auto;
+  margin-bottom:10px;
+  filter:drop-shadow(0 12px 28px rgba(0,0,0,.45));
+}
+h1{
+  margin:0;
+  font-size:clamp(30px,5vw,46px);
+  line-height:1;
+  letter-spacing:.12em;
+  font-weight:900;
+  text-transform:uppercase;
+  background:linear-gradient(90deg,#fff 5%,#b9f6fb 42%,#ff70bd 72%,#ffb44c 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.brand-sub{
+  margin-top:9px;
+  font-size:11px;
+  letter-spacing:.28em;
+  color:rgba(255,255,255,.62);
+  font-weight:700;
+}
+
+.menu{
+  width:min(100%,720px);
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.btn{
+  position:relative;
   width:100%;
-  height:calc(100% - 60px);
-  border:none;
-  border-radius:10px;
-  background:white;
+  min-height:76px;
+  padding:17px 20px 17px 24px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  font-size:14px;
+  line-height:1.25;
+  font-weight:850;
+  letter-spacing:.02em;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.035));
+  box-shadow:0 14px 35px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  cursor:pointer;
+  overflow:hidden;
+  text-align:left;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
 }
+.btn::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:5px;
+  background:var(--cyan);
+  box-shadow:0 0 18px currentColor;
+}
+.btn::after{
+  content:"›";
+  position:absolute;
+  right:18px;top:50%;
+  transform:translateY(-52%);
+  color:rgba(255,255,255,.48);
+  font-size:25px;
+  font-weight:300;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 20px 42px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+.btn:active{transform:scale(.985)}
 
-/* 🔙 BOTÓN VOLVER */
+/* BKA palette by module */
+.btn.SISTEMAS::before{background:var(--cyan);color:var(--cyan)}
+.btn:not(.SISTEMAS):nth-of-type(2)::before{background:var(--magenta);color:var(--magenta)}
+.btn:not(.SISTEMAS):nth-of-type(3)::before{background:var(--orange);color:var(--orange)}
+.btn:not(.SISTEMAS):nth-of-type(4)::before{background:var(--lime);color:var(--lime)}
+.calendar-btn::before{background:var(--blue);color:var(--blue)}
+.drive::before{background:var(--gold);color:var(--gold)}
+
+/* VIEWERS */
+#viewerScreen,#calendarScreen{padding:18px}
+#viewerScreen,#calendarScreen{justify-content:flex-start}
+iframe{
+  width:100%;height:calc(100% - 2px);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 20px 55px rgba(0,0,0,.42);
+}
 .back{
   position:absolute;
-  top:12px;
-  left:12px;
-  padding:8px 14px;
-  border:none;
-  border-radius:10px;
-  background:rgba(0,0,0,.6);
-  color:white;
-  font-size:13px;
+  top:18px;left:18px;
+  padding:9px 15px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:13px;
+  background:rgba(5,9,20,.78);
+  color:#fff;
+  font-size:13px;font-weight:800;
   cursor:pointer;
   z-index:10;
+  backdrop-filter:blur(12px);
+}
+
+@media(max-width:680px){
+  .screen{padding:18px 14px}
+  .header{margin-top:16px;margin-bottom:22px}
+  .logo{width:120px}
+  .menu{grid-template-columns:1fr;gap:10px;max-width:430px}
+  .btn{min-height:62px;padding:14px 20px;font-size:13px;border-radius:18px}
+  #viewerScreen,#calendarScreen{padding:10px}
+  .back{top:10px;left:10px}
+  iframe{border-radius:16px}
+}
+
+@media(max-height:650px) and (min-width:681px){
+  .header{margin-top:12px;margin-bottom:15px}
+  .logo{width:100px}
+  .menu{gap:9px}
+  .btn{min-height:62px;padding:13px 18px}
 }
