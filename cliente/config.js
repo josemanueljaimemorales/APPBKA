@@ -4,7 +4,7 @@
 // No necesitas editar los módulos.
 // =====================================================
 window.CLIENTE = {
-  nombre: "ESGILA",
+  nombre: "BKA",
   subtitulo: "GIMNASIA ARTÍSTICA",
   logo: "logo.png",
   colores: {
