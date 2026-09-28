@@ -1,81 +1,29 @@
-// 🔥 CAMBIO DE PANTALLAS
-function openScreen(type){
+const MODULES={
+  basicos:'modulos/basicos/index.html',
+  sistemas:'modulos/sistemas/index.html',
+  fuerza:'modulos/fuerza/index.html',
+  rutinas:'modulos/rutinas/index.html',
+  cargas:'modulos/cargas/index.html',
+  'gav-training':'modulos/gav-training/index.html',
+  normativos:'modulos/normativos/index.html'
+};
+const viewer=document.getElementById('viewer');
+const frame=document.getElementById('frame');
+document.querySelectorAll('[data-module]').forEach(btn=>btn.addEventListener('click',()=>{
+  const url=MODULES[btn.dataset.module];
+  if(!url)return;
+  frame.src=url;
+  viewer.classList.remove('hidden');
+}));
+document.getElementById('back').onclick=()=>{frame.src='';viewer.classList.add('hidden')};
 
-  const screens = document.querySelectorAll(".screen");
 
-  // Ocultar todas
-  screens.forEach(screen=>{
-    screen.classList.remove("active");
-  });
-
-  // 📅 CALENDARIO
-  if(type === "calendar"){
-    const cal = document.getElementById("calendarScreen");
-    if(cal) cal.classList.add("active");
+const archivosBtn=document.getElementById('archivos-planificacion');
+archivosBtn.addEventListener('click',()=>{
+  const url=(window.CLIENTE&&window.CLIENTE.onedrive||'').trim();
+  if(!url){
+    alert('Configura el enlace de OneDrive en cliente/config.js');
     return;
   }
-
-  // 📂 DRIVE (sale de la app)
-  if(type === "drive"){
-  window.location.replace("https://1drv.ms/f/c/55b6a939d4276db6/IgDxmPmdRMJ_RIAg23Wl3xAUAUXbSrEx5qf2YvjdYjuyFto");
-  return;
-}
-
-  // 🌐 URLs internas
-  const urls = {
-    SISTEMAS: "https://josemanueljaimemorales.github.io/Sistemas-AKC/",
-    fuerza: "https://josemanueljaimemorales.github.io/AKC-CON-REPORTE/",
-    FuerzaFIG: "https://josemanueljaimemorales.github.io/FUERZAFIG/",
-    basicos: "https://josemanueljaimemorales.github.io/Basicos_AKC/"
-  };
-
-  const frame = document.getElementById("viewerFrame");
-  const viewer = document.getElementById("viewerScreen");
-
-  // 🔥 seguridad
-  if(!urls[type]){
-    goHome();
-    return;
-  }
-
-  // Limpiar antes de cargar
-  if(frame) frame.src = "";
-
-  // Cargar nueva URL
-  if(frame && viewer){
-    frame.src = urls[type];
-    viewer.classList.add("active");
-  }
-}
-
-// 🔙 REGRESAR AL HOME
-function goHome(){
-
-  const screens = document.querySelectorAll(".screen");
-
-  screens.forEach(screen=>{
-    screen.classList.remove("active");
-  });
-
-  const home = document.getElementById("home");
-  const frame = document.getElementById("viewerFrame");
-
-  if(home) home.classList.add("active");
-
-  // limpiar iframe
-  if(frame) frame.src = "";
-}
-
-// 🔥 INICIO LIMPIO
-window.addEventListener("load", () => {
-
-  const screens = document.querySelectorAll(".screen");
-  const home = document.getElementById("home");
-
-  screens.forEach(screen=>{
-    screen.classList.remove("active");
-  });
-
-  if(home) home.classList.add("active");
-
+  window.open(url,'_blank','noopener,noreferrer');
 });
