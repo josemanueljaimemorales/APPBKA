@@ -74,7 +74,7 @@ font-size:20px;
   width:min(270px,68vw);
   max-height:150px;
   object-fit:contain;
-  filter:brightness(0) invert(1) drop-shadow(0 10px 28px rgba(0,126,255,.18));
+  filter:drop-shadow(0 10px 28px rgba(0,126,255,.18));
   opacity:.96;
   margin:12px auto 4px;
 }

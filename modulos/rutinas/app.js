@@ -40,7 +40,7 @@ async function loadExcel(){
 function showHome(){
 screen.innerHTML = `
 <div class="homeTitle">
-  <div class="eyebrow"><span data-cliente-name>ESGILA</span></div>
+  <div class="eyebrow"><span data-cliente-name>BKA</span></div>
   <h1>RUTINAS</h1>
   <p>Gimnasia Artística Varonil</p>
 </div>
@@ -56,7 +56,7 @@ screen.innerHTML = `
   </div>
 
 </div>
-${data.length===0 ? `<div class="dataNotice">El archivo de rutinas actual no contiene atletas ESGILA. Sustituye <b>Excel_Solo_Valores.xlsx</b> por el Excel de rutinas de ESGILA para mostrar sus rutinas.</div>` : ``}
+${data.length===0 ? `<div class="dataNotice">El archivo de rutinas actual no contiene atletas BKA. Sustituye <b>Excel_Solo_Valores.xlsx</b> por el Excel de rutinas de BKA para mostrar sus rutinas.</div>` : ``}
 `;
 }
 
