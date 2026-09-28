@@ -1,51 +1,40 @@
 let data = [];
 let NP = {};
 let OBL = [];
-let clubAthletes = new Set();
 
 const screen = document.getElementById("screen");
 
 async function loadExcel(){
-const res = await fetch("Excel_Solo_Valores.xlsx?"+Date.now());
-if(!res.ok) throw new Error("No se encontró Excel_Solo_Valores.xlsx");
-const buffer = await res.arrayBuffer();
-const wb = XLSX.read(buffer);
-clubAthletes = await loadClubAthletes();
-data = XLSX.utils.sheet_to_json(wb.Sheets["BASEAPPRUTINAS"] || { });
-const npSheet = XLSX.utils.sheet_to_json(wb.Sheets["NP"] || { });
-OBL = [];
-data = data.filter(r=>clubAthletes.has(String(r["ATLETA"]||"").trim().toUpperCase()));
+  const res = await fetch("Excel_Solo_Valores.xlsx?" + Date.now());
+  if(!res.ok) throw new Error("No se encontró Excel_Solo_Valores.xlsx");
 
-npSheet.forEach(r=>{
-const keys = Object.keys(r);
-const name = (r[keys[0]]||"").toString().trim().toUpperCase();
-if(name && clubAthletes.has(name)) NP[name]=r;
-});
+  const buffer = await res.arrayBuffer();
+  const wb = XLSX.read(buffer, {type:"array"});
 
-showHome();
-}
+  // La fuente de atletas de RUTINAS es exclusivamente su propio Excel.
+  // No se consulta ningún padrón externo de ESGILA/BKA ni otro módulo.
+  const baseSheet = wb.Sheets["BASEAPPRUTINAS"];
+  if(!baseSheet) throw new Error("El Excel no contiene la hoja BASEAPPRUTINAS");
+  data = XLSX.utils.sheet_to_json(baseSheet, {defval:""});
 
-async function loadClubAthletes(){
-  const names=new Set();
-  const sources=["../gav-training/trabajo_gav.xlsx","../normativos/NORMATIVOS_ESGILA.xlsx"];
-  for(const url of sources){
-    try{
-      const r=await fetch(url+"?"+Date.now());
-      if(!r.ok) continue;
-      const b=await r.arrayBuffer();
-      const w=XLSX.read(b,{type:"array"});
-      if(url.includes("trabajo_gav")){
-        const rows=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{header:1,defval:""});
-        const h=(rows[0]||[]).map(v=>String(v).trim().toUpperCase());
-        const i=h.indexOf("NOMBRE");
-        if(i>=0) rows.slice(1).forEach(row=>{const n=String(row[i]||"").trim().toUpperCase();if(n)names.add(n);});
-      }else{
-        const rows=XLSX.utils.sheet_to_json(w.Sheets["NORMATIVOS"],{header:1,defval:""});
-        (rows[0]||[]).slice(2).forEach(v=>{const n=String(v||"").trim().toUpperCase();if(n)names.add(n);});
-      }
-    }catch(e){console.warn("No se pudo leer padrón ESGILA",url,e)}
+  const npSheet = wb.Sheets["NP"];
+  NP = {};
+  if(npSheet){
+    XLSX.utils.sheet_to_json(npSheet, {defval:""}).forEach(r=>{
+      const keys = Object.keys(r);
+      const name = String(r[keys[0]] || "").trim().toUpperCase();
+      if(name && !name.startsWith("__")) NP[name] = r;
+    });
   }
-  return names;
+
+  OBL = wb.Sheets["OBLIGATORIOS"]
+    ? XLSX.utils.sheet_to_json(wb.Sheets["OBLIGATORIOS"], {defval:""})
+    : [];
+
+  // Limpieza mínima: solo registros que realmente tengan atleta y aparato.
+  data = data.filter(r => String(r["ATLETA"] || "").trim() && String(r["APARATO"] || "").trim());
+
+  showHome();
 }
 
 function showHome(){

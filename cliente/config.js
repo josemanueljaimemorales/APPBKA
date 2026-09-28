@@ -4,7 +4,7 @@
 // No necesitas editar los módulos.
 // =====================================================
 window.CLIENTE = {
-  nombre: "BKA",
+  nombre: "ESGILA",
   subtitulo: "GIMNASIA ARTÍSTICA",
   logo: "logo.png",
   colores: {
@@ -14,5 +14,5 @@ window.CLIENTE = {
   },
   calendario: "",
   // Pega aquí el enlace real de OneDrive para "ENLACE A ARCHIVOS DE PLANIFICACIÓN Y HORARIOS".
-  onedrive: "https://1drv.ms/f/c/55b6a939d4276db6/IgC0lYRLCSV9RpVYk3zc2vS3AfivHxtZwoq3bszrudWQqbw"
+  onedrive: ""
 };
