@@ -730,7 +730,7 @@ async function init(){
     if(document.activeElement?.tagName!=='INPUT')render();},e=>console.error(e));
   render();
 }
-const PASS_HASH='edef2f146f863341daae63d0bf0b1e8aa49b805e273a6e6ca559e40dbb22e6d6';
+const PASS_HASH='ba4ab977def42a7c486df8bc2b3986567ac496cb2f5e5e469fc4e40f64886c21';
 async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
 function gate(msg){
   root.innerHTML=`<div class="top"><a class="back" href="index.html">← Rutinas</a><h1>Editor de rutinas</h1></div>
