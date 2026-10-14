@@ -327,3 +327,6 @@ input:focus,select:focus,textarea:focus{
  border-color:rgba(16,169,199,.72) !important;
  box-shadow:0 0 0 3px rgba(16,169,199,.13) !important;
 }
+
+html{background:#0f2027;min-height:100%}
+body{min-height:100vh}
