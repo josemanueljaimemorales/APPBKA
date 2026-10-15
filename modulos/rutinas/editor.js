@@ -1,4 +1,4 @@
-/* AKC Rutinas – Editor con cálculo de NP (Código FIG 2025-2028, FMG N9/N10, USAG N7/N8) */
+/* BKA Rutinas (basado en AKC) – Editor con cálculo de NP (Código FIG 2025-2028, FMG N9/N10, USAG N7/N8) */
 const FB_CONFIG={apiKey:"AIzaSyBNRAkDXLlw5fyiT01-ZfUyB0A7ShsAxyg",authDomain:"akc-con-reporte.firebaseapp.com",projectId:"akc-con-reporte"};
 const COLLECTION='rutinasBKA', DOC='estado', LOCAL='rutinasBKA_estado';
 const APS=[['PISO','Piso'],['ARZON','Arzón'],['ANILLOS','Anillos'],['SALTO','Salto'],['PARALELAS','Paralelas'],['FIJA','Fija']];
@@ -19,6 +19,11 @@ const r1=x=>Math.round(x*10+1e-9)/10;
 const f1=x=>(Math.round(x*10+1e-9)/10).toFixed(1);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function nk(s){return String(s??'').replace(/½/g,' 1/2 ').replace(/¼/g,' 1/4 ').replace(/¾/g,' 3/4 ').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9/]+/g,' ').trim();}
+// Piso: elementos que cubren la balanza en una pierna (planchas I.61/I.62, arabesca, flick facial o salto con giro a facial).
+const esBalanza=r=>r.k==='PISO|1|61'||r.k==='PISO|1|62'||/ (arabesc[a-z]*|fli(c|ck|k)( flac)? facial|salto( con)?( [a-z0-9/]+)? giro a facial) /.test(' '+nk(r.n)+' ');
+// Paralelas: elementos que llegan a manos balanceando atrás, y lo que puede seguir sin valor en la misma dirección.
+const llegaAManos=r=>r.k==='PARALELAS|2|1'||/ (vuelo|imp(ulso)? a manos) /.test(' '+nk(r.n)+' ');
+const PV_OPC={medio:'Cambio (½ giro)',giro:'Giro completo',healy:'Healy',gatson:'Gatson'};
 const nameKey=v=>String(v??'').toUpperCase().replace(/\s+/g,'');
 function normLevel(v){v=String(v||'').toUpperCase().replace(/\s+/g,'');if(v==='NFIG'||v==='FIG')return'FIG';const m=v.match(/^N?(7|8|9|10)$/);return m?'N'+m[1]:'FIG';}
 function table(ap,nivel){return nivel==='N8'&&ap==='ARZON'?'N8ARZON':'FIG';}
@@ -242,6 +247,15 @@ function compute(ap,rows,nivel,plantada,opt){
     const kipHS=/ (alemana|kip|kipe|kippe|dominacion at(ras)?) /.test(ta)&&/ (a manos|apoyo invertido|ap inv) /.test(ta);
     const atras=/ (gigante|molino at(ras)?|stalder|quinta|salvada) /.test(tb)||/ 1\/2 g .*cubital/.test(tb);
     if(kipHS&&atras&&!/ (molino ad(elante)?|endo) /.test(tb))res.enotes.push(`Posible contrabalanceo: "${a.n}" y después "${b.n}". Error de composición -0.30 (jurado E) si van seguidos.`);});
+  // Paralelas (FIG, N9 y N10): después de llegar a manos balanceando atrás (vuelo o impulso a manos),
+  // el siguiente elemento no puede bajar hacia adelante (Moy, Tippelt, molino/gigante, Kenmotsu, Bhavsar, Diamidov,
+  // Makuts, Felge, Peters): contrabalanceo, -0.30 del jurado E (Código FIG 2025-2028, art. 14.2.1 4.a y 4.b).
+  // Si entre ellos hay un elemento de fuerza (L-sit, Kato…) ya no van seguidos y no aplica.
+  if(ap==='PARALELAS'&&nivel!=='N7'&&nivel!=='N8')rows.forEach((a,i)=>{const b=rows[i+1];if(!b||a.ct)return;
+    const nb=' '+nk(b.n)+' ';
+    const aManos=llegaAManos(a)&&!a.pv;
+    const baja=/ (moy|tippelt|tippet|molino|gigante|kenmotsu|bhavsar|babsar|diamidov|diamidob|makuts|felge|peters) /.test(nb);
+    if(aManos&&baja)res.enotes.push(`Posible contrabalanceo: "${a.n}" y después "${b.n}". -0.30 del jurado E (después de llegar a manos balanceando atrás, el siguiente elemento debe seguir en la misma dirección o ir precedido de un elemento de fuerza). Si después del vuelo hace un cambio, giro, Healy o Gatson sin capturarlo, márcalo en el elemento.`);});
   const valued=items.filter(x=>x.val>0);
   const n7=nivel==='N7', n8=nivel==='N8', usag=n7||n8;
   let dis=null;
@@ -316,7 +330,9 @@ function compute(ap,rows,nivel,plantada,opt){
       if(nivel==='FIG'){const last=rows[rows.length-1];if(!last||!multi(last)){res.nd=r1(res.nd+.3);res.notes.push('Sin mortal múltiple como último elemento (sénior): -0.3 del jurado D.');}}
       else if(!rows.some(multi)){res.nd=r1(res.nd+.3);res.notes.push('Sin mortal múltiple en la rutina: -0.3 del jurado D.');}
     }
-    if(!rows.some(r=>r.k==='PISO|1|61'||r.k==='PISO|1|62')&&!(opt&&opt.balPiso)){res.nd=r1(res.nd+.3);res.notes.push('Sin balanza en una pierna (I.61 o I.62): -0.3 del jurado D. Agrégala como elemento (cuente o no entre los 8) o marca que la tiene en la coreografía.');}
+    // Balanza en una pierna: la cubren las planchas I.61/I.62 o cualquier elemento llamado arabesca,
+    // flick facial o salto con giro a facial (cuente o no entre los 8). Si no hay, se puede marcar en la coreografía.
+    if(!rows.some(esBalanza)&&!(opt&&opt.balPiso)){res.nd=r1(res.nd+.3);res.notes.push('Sin balanza en una pierna (arabesca, flick facial, salto con giro a facial o plancha I.61/I.62): -0.3 del jurado D. Agrégala como elemento (cuente o no entre los 8) o marca que la tiene en la coreografía.');}
   }
   if(ap==='ANILLOS'&&!usagN&&rows.length){
     if(!rows.some(r=>r.g===1&&/ (apoyo invertido|ap inv|sost|sostenido|a manos) /.test(descOf(r)))){res.nd=r1(res.nd+.3);res.notes.push('Sin impulso al apoyo invertido: -0.3 del jurado D.');}
@@ -340,16 +356,37 @@ function nAv(c){return (new Set(c.notes)).size+(c.enotes?.length||0);
 
 /* ---------- guardado ---------- */
 function setSync(c,t){syncState=[c,t];const el=document.querySelector('.sync');if(el){el.className='sync '+c;el.textContent=t;}}
+/* Guardado en la nube por cambio: cada atleta se escribe por separado para que
+   dos dispositivos editando al mismo tiempo no se borren los cambios entre sí. */
+let SENT=null, DOC_EXISTS=false, SAVING=false;
+function curState(){
+  const lib={};for(const n of Object.keys(S.atletas))lib[n]=JSON.stringify({...S.atletas[n],vista:buildVista(n)});
+  const v=oblVista(),obl={},ov={};for(const n of Object.keys(S.obl.atletas||{})){obl[n]=JSON.stringify(S.obl.atletas[n]);ov[n]=JSON.stringify(v.atletas[n]||null);}
+  const al={};for(const [k,x] of Object.entries(S.alias||{}))al[k]=JSON.stringify(x);
+  return{lib,obl,ov,al,orden:JSON.stringify(ORDER),bajas:JSON.stringify(S.bajas||[]),oorden:JSON.stringify(S.obl.orden||[]),obajas:JSON.stringify(S.obl.bajas||[])};
+}
+function fullDoc(c){const P=o=>Object.fromEntries(Object.entries(o).map(([k,v])=>[k,JSON.parse(v)]));
+  return{atletas:P(c.lib),alias:P(c.al),orden:JSON.parse(c.orden),bajas:JSON.parse(c.bajas),
+    obligatorios:{atletas:P(c.obl),orden:JSON.parse(c.oorden),bajas:JSON.parse(c.obajas),vista:{orden:JSON.parse(c.oorden),atletas:P(c.ov)}}};}
 function save(){
   try{localStorage.setItem(LOCAL,JSON.stringify({...S,orden:ORDER}));}catch(e){}
   clearTimeout(saveTimer);
   if(!cloud){setSync('warn','Guardado en este dispositivo');return;}
-  setSync('','Guardando…');
+  setSync('','Guardando…');SAVING=true;
   saveTimer=setTimeout(async()=>{
-    try{const out={};for(const n of Object.keys(S.atletas))out[n]={...S.atletas[n],vista:buildVista(n)};
-      await cloud.set(JSON.parse(JSON.stringify({atletas:out,alias:S.alias,orden:ORDER,bajas:S.bajas||[],obligatorios:{...S.obl,vista:oblVista()}})));
-      await cloud.update({updatedAt:firebase.firestore.FieldValue.serverTimestamp()});setSync('ok','Guardado en la nube');}
+    try{const cur=curState();
+      if(!DOC_EXISTS||!SENT){await cloud.set({...fullDoc(cur),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});DOC_EXISTS=true;}
+      else{const FP=(...x)=>new firebase.firestore.FieldPath(...x), DEL=firebase.firestore.FieldValue.delete(), u=[];
+        const diff=(a,b,path)=>{for(const k in a)if(a[k]!==b[k])u.push(FP(...path,k),JSON.parse(a[k]));for(const k in b)if(!(k in a))u.push(FP(...path,k),DEL);};
+        diff(cur.lib,SENT.lib,['atletas']);diff(cur.obl,SENT.obl,['obligatorios','atletas']);diff(cur.ov,SENT.ov,['obligatorios','vista','atletas']);diff(cur.al,SENT.al,['alias']);
+        if(cur.orden!==SENT.orden)u.push(FP('orden'),JSON.parse(cur.orden));
+        if(cur.bajas!==SENT.bajas)u.push(FP('bajas'),JSON.parse(cur.bajas));
+        if(cur.oorden!==SENT.oorden)u.push(FP('obligatorios','orden'),JSON.parse(cur.oorden),FP('obligatorios','vista','orden'),JSON.parse(cur.oorden));
+        if(cur.obajas!==SENT.obajas)u.push(FP('obligatorios','bajas'),JSON.parse(cur.obajas));
+        if(u.length)await cloud.update(...u,FP('updatedAt'),firebase.firestore.FieldValue.serverTimestamp());}
+      SENT=cur;setSync('ok','Guardado en la nube');}
     catch(e){console.error(e);setSync('warn','Sin nube: guardado en este dispositivo');}
+    SAVING=false;
   },600);
 }
 
@@ -382,7 +419,7 @@ function renderList(){
     if(ui.delMode){h+=`<button class="card del" data-act="delask" data-v="${esc(n)}"><span><b>${esc(n)}</b><span class="lv">${esc(a.nivel)}</span></span><span class="xdel">Eliminar</span></button>`;continue;}
     h+=`<button class="card" data-act="open" data-v="${esc(n)}"><span><b>${esc(n)}</b><span class="lv">${esc(a.nivel)}</span></span><span class="aa">${f1(t.aa)}${APS.reduce((x,[k])=>x+nAv(t[k]),0)?`<small class="warn"> ⚠${APS.reduce((x,[k])=>x+nAv(t[k]),0)}</small>`:''}</span></button>`;}
   h+=`</div><div class="actions"><button class="btn" data-act="export">Descargar Excel actualizado</button></div>`;
-  h+=`<div class="actions printbar"><button class="btn" data-act="print">Imprimir rutinas</button><small>Una hoja tamaño carta por atleta. En el diálogo elige "Guardar como PDF".</small></div>`;
+  h+=`<div class="actions printbar"><button class="btn" data-act="print">Imprimir rutinas</button><small>Una hoja tamaño carta horizontal por atleta. En el diálogo elige "Guardar como PDF".</small></div>`;
   root.innerHTML=h;
 }
 function metaLine(r,res,i){
@@ -398,6 +435,7 @@ function metaLine(r,res,i){
   if(r.t==='JA'&&a.nivel!=='N7'&&a.nivel!=='N8')b+='<span class="badge b">Juvenil A: sin valor en '+a.nivel+'</span>';
   if(r.ct)b+='<span class="badge i">A cambio de toma</span>';
   if(r.gig)b+=`<span class="badge i">Cae a ${r.gig}</span>`;
+  if(r.pv&&PV_OPC[r.pv])b+=`<span class="badge i">Luego: ${PV_OPC[r.pv]} (sin valor)</span>`;
   if(r.nf)b+='<span class="badge b">No está en el Código 2025: revisa ID</span>';
   if(r.ex)b+=`<span class="badge w">${esc(r.ex)}</span>`;
   return esc(m)+(b?'<div>'+b+'</div>':'');
@@ -412,7 +450,8 @@ function renderAthlete(){
     h+=`<div class="metrics"><div><b>${f1(res.dv)}</b><small>Dificultad</small></div><div><b>${f1(res.eg)}</b><small>Grupos</small></div><div><b>${f1(res.cv)}</b><small>Conexión</small></div><div><b>${f1(res.bon)}</b><small>Bonos</small></div><div><b>${res.nd?'-'+f1(res.nd):'0.0'}</b><small>Ded. jurado D</small></div></div>`;
     h+=`<div class="chips">${res.egDet.map(d=>`<span class="chip ${d.hit?'hit':'miss'}">${d.sal?'Salida':'Grupo '+ROM[d.g]}${d.v!=null?' '+d.v.toFixed(1):''}</span>`).join('')}</div>`;
     if(a.nivel!=='N7')h+=`<label class="opt"><input type="checkbox" data-act="plant" ${a.p?.[ui.ap]?'checked':''}> Salida plantada (bono)</label>`;
-    if(ui.ap==='PISO')h+=`<label class="opt"><input type="checkbox" data-act="balpiso" ${a.p?.balPiso?'checked':''}> Tiene balanza en una pierna en la coreografía (fuera de los 8)</label>`;
+    // La casilla solo se muestra si la rutina no tiene ya un elemento de balanza.
+    if(ui.ap==='PISO'&&!(a.r.PISO||[]).some(esBalanza))h+=`<label class="opt"><input type="checkbox" data-act="balpiso" ${a.p?.balPiso?'checked':''}> Tiene balanza en una pierna en la coreografía (fuera de los 8)</label>`;
   }else h+=`<div class="metrics"><div><b>${res.vaults[0]?res.vaults[0].v.toFixed(1):'-'}</b><small>Salto 1</small></div><div><b>${res.vaults[1]?res.vaults[1].v.toFixed(1):'-'}</b><small>Salto 2</small></div>${res.avg!=null?`<div><b>${f1(res.avg)}</b><small>Promedio final</small></div>`:''}</div>`;
   if(res.notes.length||res.enotes?.length){h+=`<div class="avisos"><b>Avisos (${(new Set(res.notes)).size+(res.enotes?.length||0)})</b>`;
     if(res.notes.length)h+=`<ul class="notes">${[...new Set(res.notes)].map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`;
@@ -446,6 +485,7 @@ function editPanel(r,i,a){
   const rowsA=a.r[ui.ap]||[];
   if((ui.ap==='PISO'||ui.ap==='FIJA')&&a.nivel!=='N7'&&i<rowsA.length-1){const cur=(r.c&&r.cv!=null&&r.cv!=='')?String(r.cv):'';
     h+=`<label>Conexión manual con "${esc(rowsA[i+1].n)}"<select data-f="cvm" data-i="${i}"><option value="" ${cur===''?'selected':''}>No, solo según reglas</option><option value="0.1" ${cur==='0.1'?'selected':''}>Sí, 0.1</option><option value="0.2" ${cur==='0.2'?'selected':''}>Sí, 0.2</option></select></label>`;}
+  if(ui.ap==='PARALELAS'&&llegaAManos(r))h+=`<label>Después hace (sin valor)<select data-f="pv" data-i="${i}"><option value="" ${!r.pv?'selected':''}>Según el siguiente elemento</option>${Object.entries(PV_OPC).map(([k,t])=>`<option value="${k}" ${r.pv===k?'selected':''}>${t}</option>`).join('')}</select></label>`;
   if(ui.ap==='FIJA'&&r.g===2)h+=`<label>Al agarrar continúa con<select data-f="gig" data-i="${i}"><option value="" ${!r.gig?'selected':''}>Según el siguiente elemento</option><option value="gigante" ${r.gig==='gigante'?'selected':''}>Cae a gigante</option><option value="molino" ${r.gig==='molino'?'selected':''}>Cae a molino</option></select></label>`;
   if(ui.ap==='FIJA')h+=`<label class="opt"><input type="checkbox" data-f="ct" data-i="${i}" ${r.ct?'checked':''}> Después de este elemento hay cambio de toma (sin valor)</label>`;
   if(r.k&&CAT[r.k])h+=`<small style="color:var(--muted)">${esc(CAT[r.k].d)}${CAT[r.k].en&&CAT[r.k].en!==CAT[r.k].d?`<br><i>Código en inglés: ${esc(CAT[r.k].en)}</i>`:''}${CAT[r.k].corr?'<br>Traducción corregida con el Código en inglés.':''}</small>`;
@@ -524,6 +564,7 @@ root.addEventListener('change',e=>{
     if(f==='gx')r.gx=t.value?+t.value:undefined;
     if(f==='ct')r.ct=t.checked||undefined;
     if(f==='gig')r.gig=t.value||undefined;
+    if(f==='pv')r.pv=t.value||undefined;
     if(f==='cv')r.cv=t.value===''?undefined:t.value;
     if(f==='cvm'){if(t.value){r.c=true;r.cv=t.value;}else{r.cv=undefined;r.c=false;}}
     save();render();}
@@ -570,7 +611,7 @@ function renderOList(){
     ${ui.oerr?`<div class="badge b">${esc(ui.oerr)}</div>`:''}<div class="actions"><button class="btn" data-act="oaddok">Agregar</button><button class="btn ghost" data-act="oaddno">Cancelar</button></div></div>`;
   if(ui.oask)h+=`<div class="score addbox"><b>¿Eliminar a ${esc(ui.oask)}?</b><small>Se borra su selección de elementos y deja de aparecer en Obligatorios.</small><div class="actions"><button class="btn danger" data-act="odelok">Eliminar</button><button class="btn ghost" data-act="odelno">Cancelar</button></div></div>`;
   h+=`<div class="cards">`;
-  const _oprint=`<div class="actions printbar"><button class="btn" data-act="oprint">Imprimir obligatorios</button><small>Una hoja tamaño carta por atleta.</small></div>`;
+  const _oprint=`<div class="actions printbar"><button class="btn" data-act="oprint">Imprimir obligatorios</button><small>Una hoja tamaño carta horizontal por atleta.</small></div>`;
   for(const n of O.orden){const a=O.atletas[n];if(!a)continue;const t=oblTotals(a);
     h+=ui.odel?`<button class="card del" data-act="odelask" data-v="${esc(n)}"><span><b>${esc(n)}</b><span class="lv">Nivel ${esc(a.nivel)}</span></span><span class="xdel">Eliminar</span></button>`
       :`<button class="card" data-act="oopen" data-v="${esc(n)}"><span><b>${esc(n)}</b><span class="lv">Nivel ${esc(a.nivel)}</span></span><span class="aa">${f1(t.aa)}</span></button>`;}
@@ -642,7 +683,7 @@ function printAll(build){
   const fecha=new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
   let h='';
   if(typeof build==='function')h=build(fecha); else for(const n of ORDER){const a=S.atletas[n];if(!a)continue;const t=totals(n);
-    h+=`<section class="sheet"><header class="ph"><img src="logo-bka.png" alt=""><div><h1>${esc(n)}</h1><p>Nivel ${esc(a.nivel)} · Rutinas libres · ${esc(fecha)}</p></div><div class="paa"><span>NP AA</span><b>${f1(t.aa)}</b></div></header><div class="pgrid">`;
+    h+=`<section class="sheet fsheet"><header class="ph"><img src="logo-bka.png" alt=""><div><h1>${esc(n)}</h1><p>Nivel ${esc(a.nivel)} · Rutinas libres · ${esc(fecha)}</p></div><div class="paa"><span>NP AA</span><b>${f1(t.aa)}</b></div></header><div class="pgrid">`;
     for(const [ap] of APS){const c=t[ap], rows=a.r[ap]||[];
       h+=`<article class="pap"><div class="pap-h"><h2>${AP_NAME[ap]}</h2><b>NP ${f1(c.np)}</b></div>`;
       if(ap==='SALTO'){
@@ -653,7 +694,7 @@ function printAll(build){
         h+=`<div class="pm">Dificultad ${f1(c.dv)} · Grupos ${f1(c.eg)} · Conexión ${f1(c.cv)}${c.bon?` · Bonos ${f1(c.bon)}`:''}${c.nd?` · Ded. neutral -${f1(c.nd)}`:''}</div>`;
         h+=`<table><tr><th>Elemento</th><th>ID</th><th>Grupo</th><th>Valor</th><th>VD</th></tr>`;
         rows.forEach((r,i)=>{const vd=c.rep.has(i)?0:valOf(r,a.nivel);
-          h+=`<tr class="${res_off(c,i,vd)?'off':''}"><td>${esc(r.n)}${r.c&&i<rows.length-1?' <span class="cx">↔</span>':''}</td><td>${r.t==='JA'?'EV':esc(r.id||'')}</td><td>${r.t==='JA'?'X':(r.g?ROM[r.g]:'')}</td><td>${r.t==='JA'?'A':esc(r.l||'')}</td><td>${vd.toFixed(1)}</td></tr>`;});
+          h+=`<tr class="${res_off(c,i,vd)?'off':''}"><td>${esc(r.n)}${r.pv&&PV_OPC[r.pv]?' → '+esc(PV_OPC[r.pv]):''}${r.c&&i<rows.length-1?' <span class="cx">↔</span>':''}</td><td>${r.t==='JA'?'EV':esc(r.id||'')}</td><td>${r.t==='JA'?'X':(r.g?ROM[r.g]:'')}</td><td>${r.t==='JA'?'A':esc(r.l||'')}</td><td>${vd.toFixed(1)}</td></tr>`;});
       }
       if(!rows.length)h+=`<tr><td colspan="5">Sin elementos</td></tr>`;
       h+=`</table></article>`;}
@@ -661,8 +702,36 @@ function printAll(build){
   area.innerHTML=h;
   const imgs=[...area.querySelectorAll('img')];
   Promise.all(imgs.map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r;}))).then(()=>{
+    fitOblSheets(area);
     const prev=document.title, d=new Date(); document.title=`${PRINT_PREF} ${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
     window.print(); setTimeout(()=>{document.title=prev;},1000);});
+}
+/* Libres y obligatorios: acomoda los 6 aparatos en 3 columnas (opción A o B, la que deje letra más grande) y elige por atleta
+   la letra más grande con la que todo cabe en una hoja carta horizontal. */
+function fitOblSheets(area){
+  const pxmm=96/25.4, alto=199.9*pxmm*0.98; // alto útil de la hoja (215.9 mm - márgenes), con 2 % de holgura
+  area.classList.add('measuring');
+  area.querySelectorAll('.osheet,.fsheet').forEach(sh=>{
+    const grid=sh.querySelector('.pgrid'), cards=[...grid.querySelectorAll(':scope > .pap')];
+    grid.innerHTML='';const cols=[0,1,2].map(()=>{const d=document.createElement('div');d.className='ocol';grid.appendChild(d);return d;});
+    const acomodar=fs=>{
+      sh.style.setProperty('--fs',fs+'px');
+      cards.forEach(c=>cols[0].appendChild(c));
+      const hs=cards.map(c=>c.getBoundingClientRect().height+2.5*pxmm);
+      // Orden de las tarjetas: Piso, Hongo/Arzón, Anillos, Salto, Paralelas, Fija (OAPS).
+      // Opción A: Piso+Arzón | Anillos+Salto+Paralelas | Fija.  Opción B: Piso+Arzón | Anillos+Salto | Paralelas+Fija.
+      const OPCIONES=[[0,0,1,1,1,2],[0,0,1,1,2,2]];
+      let mejor=OPCIONES[0],maxMejor=Infinity;
+      OPCIONES.forEach(asig=>{const suma=[0,0,0];asig.forEach((cl,i)=>suma[cl]+=hs[i]||0);const m=Math.max(...suma);if(m<maxMejor){maxMejor=m;mejor=asig;}});
+      cards.forEach((c,i)=>cols[mejor[i]].appendChild(c));
+      return sh.getBoundingClientRect().height;
+    };
+    let lo=7,hi=18;
+    for(let k=0;k<12;k++){const mid=(lo+hi)/2;if(acomodar(mid)<=alto)lo=mid;else hi=mid;}
+    // Verificación final: si con la letra elegida no cabe, se baja poco a poco hasta que quepa.
+    while(acomodar(lo)>alto&&lo>6)lo-=0.25;
+  });
+  area.classList.remove('measuring');
 }
 function oblPrintHTML(fecha){
   let h='';
@@ -718,7 +787,7 @@ async function init(){
   }catch(err){root.innerHTML=`<div class="top"><a class="back" href="index.html">← Rutinas</a></div><div class="empty">No se pudo abrir el editor: ${esc(err.message)}</div>`;return;}
   let stored=null;
   try{if(window.firebase){if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);cloud=firebase.firestore().collection(COLLECTION).doc(DOC);
-    const snap=await cloud.get(); if(snap.exists)stored=snap.data(); setSync('ok','Guardado en la nube');}}
+    const snap=await cloud.get(); if(snap.exists){stored=snap.data();DOC_EXISTS=true;} setSync('ok','Guardado en la nube');}}
   catch(e){console.error(e);cloud=null;setSync('warn','Sin nube: guardado en este dispositivo');}
   if(!stored){try{stored=JSON.parse(localStorage.getItem(LOCAL)||'null');}catch(e){}}
   S={atletas:stored?.atletas||{},alias:stored?.alias||{},bajas:stored?.bajas||[],obl:stored?.obligatorios||stored?.obl||{atletas:{},orden:[],bajas:[]}};
@@ -729,9 +798,16 @@ async function init(){
   const lv=readLevels(); let changed=false;
   for(const n of ORDER)if(!S.atletas[n]){S.atletas[n]=seedAthlete(n,lv[nameKey(n)]||'FIG');changed=true;}
   for(const n of Object.keys(S.atletas))if(!ORDER.includes(n))ORDER.push(n);
-  if(changed||typeof oblSeeded!=='undefined')save();
-  if(cloud)cloud.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;const d=s.data();S.atletas=d.atletas||S.atletas;S.bajas=d.bajas||S.bajas;if(d.orden)ORDER=[...new Set([...d.orden.filter(n=>S.atletas[n]),...ORDER.filter(n=>S.atletas[n])])];for(const n in S.atletas)delete S.atletas[n].vista;S.alias=d.alias||S.alias;if(d.obligatorios){S.obl=d.obligatorios;delete S.obl.vista;}
-    if(document.activeElement?.tagName!=='INPUT')render();},e=>console.error(e));
+  if(DOC_EXISTS)SENT=curState();
+  if(changed||typeof oblSeeded!=='undefined'||!DOC_EXISTS)save();
+  if(cloud)cloud.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites||SAVING)return;const d=s.data();DOC_EXISTS=true;
+    S.atletas=d.atletas||{};for(const n in S.atletas)delete S.atletas[n].vista;S.bajas=d.bajas||[];S.alias=d.alias||{};
+    ORDER=[...new Set([...(d.orden||[]).filter(n=>S.atletas[n]),...Object.keys(S.atletas)])];
+    if(d.obligatorios){S.obl={atletas:d.obligatorios.atletas||{},orden:d.obligatorios.orden||[],bajas:d.obligatorios.bajas||[]};}
+    SENT=curState();
+    if(ui.view==='athlete'&&ui.atleta&&!S.atletas[ui.atleta]){ui.view='list';ui.atleta=null;}
+    if(ui.view==='oath'&&ui.oat&&!S.obl.atletas[ui.oat]){ui.view='olist';ui.oat=null;}
+    const ae=document.activeElement?.tagName;if(ae!=='INPUT'&&ae!=='TEXTAREA'&&ae!=='SELECT')render();},e=>console.error(e));
   render();
 }
 const PASS_HASH='ba4ab977def42a7c486df8bc2b3986567ac496cb2f5e5e469fc4e40f64886c21';
