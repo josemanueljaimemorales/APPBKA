@@ -6,7 +6,8 @@ const MODULES={
   cargas:'modulos/cargas/index.html',
   'gav-training':'modulos/gav-training/index.html',
   normativos:'modulos/normativos/index.html',
-  'plan-anual':'modulos/plan-anual/index.html'
+  'plan-anual':'modulos/plan-anual/index.html',
+  femenil:'modulos/femenil/index.html'
 };
 const viewer=document.getElementById('viewer');
 const frame=document.getElementById('frame');
