@@ -17,7 +17,7 @@ body{overflow-x:hidden;overflow-y:auto}
 .module b{display:block;font-size:18px;font-weight:950;letter-spacing:.03em}
 .module small{display:block;margin-top:7px;color:rgba(255,255,255,.68);font-size:12px}
 .cyan{--c:#20b7d2}.blue{--c:#318cff}.pink{--c:#e5007d}.orange{--c:#ff8a20}.purple{--c:#a454dc}.green{--c:#42c96d}.gold{--c:#f1c24b}.normativos{--c:#9b6cff}.archivos{--c:#20b7d2}
-.archivos,.femenil{grid-column:1/-1}
+.archivos{grid-column:1/-1}
 .archivos b{font-size:16px}
 .viewer{position:fixed;inset:12px;display:flex;flex-direction:column;background:#07101d;border:1px solid rgba(255,255,255,.14);border-radius:24px;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.55);z-index:30}
 .viewer.hidden{display:none}
@@ -34,7 +34,7 @@ body{overflow-x:hidden;overflow-y:auto}
   .module{min-height:78px;padding:16px 21px;border-radius:19px}
   .module b{font-size:15px}
   .module small{font-size:12px}
-  .archivos,.femenil{grid-column:auto}
+  .archivos{grid-column:auto}
   .archivos b{font-size:14px;line-height:1.2}
   .viewer{inset:7px;border-radius:18px}
   .back{margin:8px 0 6px 8px;padding:9px 13px}
@@ -63,5 +63,16 @@ html,body{
   box-shadow:0 0 0 25px color-mix(in srgb,var(--c) 6%,transparent);pointer-events:none;
 }
 .cyan{--c:#10a9c7}.blue{--c:#1261b0}.pink{--c:#e5007d}.purple{--c:#6d1aa8}
-.green{--c:#00a878}.gold{--c:#f4c400}.normativos{--c:#6d1aa8}.plan{--c:#e5007d}.femenil{--c:#ff7a00}.archivos{--c:#10a9c7}
+.green{--c:#00a878}.gold{--c:#f4c400}.normativos{--c:#6d1aa8}.plan{--c:#e5007d}.archivos{--c:#10a9c7}
 .module b{letter-spacing:.045em}.module small{color:rgba(235,241,250,.72)}
+
+/* ===== Inicio: GAV, GAF y Avisos ===== */
+.hidden{display:none!important}
+.inicio .big{min-height:130px}
+.inicio .big b{font-size:26px}
+.inicio .avisos{grid-column:1/-1}
+.gav{--c:#10a9c7}.gaf{--c:#e5007d}.avisos{--c:#f4c400}
+.subhead{width:min(900px,100%);margin:0 auto 14px;display:flex;align-items:center;gap:12px}
+.subhead h2{margin:0;font-size:15px;letter-spacing:.12em;color:rgba(255,255,255,.85)}
+.volver{padding:9px 14px;border:1px solid rgba(255,255,255,.2);border-radius:13px;background:rgba(4,8,18,.6);color:#fff;font-weight:900;cursor:pointer}
+@media(max-width:700px){.inicio .big{min-height:100px}.inicio .big b{font-size:22px}.inicio .avisos{grid-column:auto}.subhead h2{font-size:12px}}

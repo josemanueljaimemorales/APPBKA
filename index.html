@@ -14,6 +14,13 @@
     <h1>PLATAFORMA DE <span>GIMNASIA</span></h1>
     <p data-cliente-subtitle>GIMNASIA ARTÍSTICA</p>
   </header>
+  <main class="grid inicio" id="home">
+    <button class="module gav big" data-screen="gav"><b>GAV</b><small>Gimnasia Artística Varonil · básicos, sistemas, fuerza, rutinas, cargas, normativos, plan anual y más</small></button>
+    <button class="module gaf big" data-module="femenil"><b>GAF</b><small>Gimnasia Artística Femenil · editor de rutinas, plan anual, macrociclo y calendario</small></button>
+    <button class="module avisos big" data-module="avisos"><b>AVISOS GENERALES</b><small>Avisos de coordinación para todo el club</small></button>
+  </main>
+  <section id="gav" class="hidden">
+  <div class="subhead"><button class="volver" data-screen="home">← Inicio</button><h2>GAV · GIMNASIA ARTÍSTICA VARONIL</h2></div>
   <main class="grid">
     <button class="module cyan" data-module="basicos"><b>BÁSICOS</b><small>Elementos y progresiones</small></button>
     <button class="module blue" data-module="sistemas"><b>SISTEMAS</b><small>Sistemas de entrenamiento</small></button>
@@ -23,9 +30,9 @@
     <button class="module gold" data-module="gav-training"><b>GAV TRAINING</b><small>Trabajo por grupo y atleta</small></button>
     <button class="module normativos" data-module="normativos"><b>NORMATIVOS</b><small>Evaluación y seguimiento por atleta</small></button>
     <button class="module plan" data-module="plan-anual"><b>PLAN ANUAL</b><small>Calendario, competencias, eventos, descansos y vacaciones</small></button>
-    <button class="module femenil" data-module="femenil"><b>FEMENIL</b><small>Estructura de gimnasia artística femenil</small></button>
     <button class="module archivos" id="archivos-planificacion" type="button"><b>ENLACE A ARCHIVOS DE PLANIFICACIÓN Y HORARIOS</b><small>Documentos, horarios y archivos del gimnasio</small></button>
   </main>
+  </section>
   <section id="viewer" class="viewer hidden">
     <button id="back" class="back">← INICIO</button>
     <iframe id="frame" title="Módulo"></iframe>
