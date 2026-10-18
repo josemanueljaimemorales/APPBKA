@@ -1,7 +1,7 @@
 /* BKA Femenil – Editor de rutinas con cálculo de nota de partida.
    Niveles USAG N6-N10 (Development Program 2026-2030) y Junior FIG / FIG (Código FIG GAF 2025-2028).
    Datos en datos/: elementos_fig_wag.json (FIG), usag_elementos.json + usag_saltos.json + usag_reglas.json (USAG). */
-const FB_CONFIG={apiKey:"AIzaSyBNRAkDXLlw5fyiT01-ZfUyB0A7ShsAxyg",authDomain:"akc-con-reporte.firebaseapp.com",projectId:"akc-con-reporte"};
+const FB_CONFIG={apiKey:"AIzaSyA3Zni5o3VV_Q3zIdWSnhi9a0uQNNtZa_E",authDomain:"bkaapp-f61f4.firebaseapp.com",projectId:"bkaapp-f61f4",storageBucket:"bkaapp-f61f4.firebasestorage.app",messagingSenderId:"336720035886",appId:"1:336720035886:web:36fc6827c40ee030655fbf"};
 const COLLECTION='rutinasFemBKA', DOC='estado', LOCAL='rutinasFemBKA_estado';
 const APS=[['SALTO','Salto'],['BARRAS','Barras'],['VIGA','Viga'],['PISO','Piso']];
 const EV={BARRAS:'UB',VIGA:'BB',PISO:'FX'};

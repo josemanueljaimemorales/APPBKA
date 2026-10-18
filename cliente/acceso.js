@@ -6,7 +6,7 @@
    - bkaConfig/admin: uid del administrador inicial.
    Requiere en la página: firebase-app-compat, firebase-auth-compat y firebase-firestore-compat 9.6.10. */
 (function(){
-const FB_CONFIG={apiKey:"AIzaSyBNRAkDXLlw5fyiT01-ZfUyB0A7ShsAxyg",authDomain:"akc-con-reporte.firebaseapp.com",projectId:"akc-con-reporte"};
+const FB_CONFIG={apiKey:"AIzaSyA3Zni5o3VV_Q3zIdWSnhi9a0uQNNtZa_E",authDomain:"bkaapp-f61f4.firebaseapp.com",projectId:"bkaapp-f61f4",storageBucket:"bkaapp-f61f4.firebasestorage.app",messagingSenderId:"336720035886",appId:"1:336720035886:web:36fc6827c40ee030655fbf"};
 const DOMINIO='@usuarios.bka-gimnasia.app';   // correo interno: nadie recibe correos, solo identifica al usuario
 const MIN_PASS=8;
 const ROLES={rutinas:'Editar rutinas',avisos:'Editar avisos',calendario:'Editar calendario',admin:'Administrador'};

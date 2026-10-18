@@ -1,5 +1,5 @@
 /* BKA Rutinas (basado en AKC) – Editor con cálculo de NP (Código FIG 2025-2028, FMG N9/N10, USAG N7/N8) */
-const FB_CONFIG={apiKey:"AIzaSyBNRAkDXLlw5fyiT01-ZfUyB0A7ShsAxyg",authDomain:"akc-con-reporte.firebaseapp.com",projectId:"akc-con-reporte"};
+const FB_CONFIG={apiKey:"AIzaSyA3Zni5o3VV_Q3zIdWSnhi9a0uQNNtZa_E",authDomain:"bkaapp-f61f4.firebaseapp.com",projectId:"bkaapp-f61f4",storageBucket:"bkaapp-f61f4.firebasestorage.app",messagingSenderId:"336720035886",appId:"1:336720035886:web:36fc6827c40ee030655fbf"};
 const COLLECTION='rutinasBKA', DOC='estado', LOCAL='rutinasBKA_estado';
 const APS=[['PISO','Piso'],['ARZON','Arzón'],['ANILLOS','Anillos'],['SALTO','Salto'],['PARALELAS','Paralelas'],['FIJA','Fija']];
 const NP_COL={PISO:'PISO',ARZON:'ARZON',ANILLOS:'ANILLO',SALTO:'SALTO',PARALELAS:'PARALELA',FIJA:'FIJA'};

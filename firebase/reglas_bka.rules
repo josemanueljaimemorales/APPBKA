@@ -1,5 +1,8 @@
-// ===================== REGLAS DE BKA (pegar DENTRO de "match /databases/{database}/documents { ... }") =====================
-// Lectura libre de rutinas, avisos y calendario; para escribir hace falta usuario de BKA activo con el permiso.
+rules_version = '2';
+// Reglas de Firestore del proyecto BKA (bkaapp-f61f4). Se pegan completas en Firestore Database → Reglas → Publicar.
+// Ver: rutinas, avisos y calendario (cualquiera). Editar: usuario de BKA activo con el permiso.
+service cloud.firestore {
+  match /databases/{database}/documents {
     function bkaFirmado() { return request.auth != null; }
     function bkaPerfil() { return get(/databases/$(database)/documents/bkaUsuarios/$(request.auth.uid)).data; }
     function bkaTiene(rol) {
@@ -55,4 +58,8 @@
       allow update: if bkaFirmado() && resource.data.uid == request.auth.uid && request.resource.data.uid == request.auth.uid;
       allow read: if bkaTiene('admin');
     }
-// ===================== FIN REGLAS DE BKA =====================
+
+    // Todo lo demás: cerrado.
+    match /{document=**} { allow read, write: if false; }
+  }
+}

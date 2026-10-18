@@ -1,6 +1,6 @@
 /* BKA · Avisos generales. Cualquiera ve los avisos; agregar, editar o borrar pide usuario con permiso de avisos
    (control de acceso en cliente/acceso.js). */
-const FB_CONFIG={apiKey:"AIzaSyBNRAkDXLlw5fyiT01-ZfUyB0A7ShsAxyg",authDomain:"akc-con-reporte.firebaseapp.com",projectId:"akc-con-reporte"};
+const FB_CONFIG={apiKey:"AIzaSyA3Zni5o3VV_Q3zIdWSnhi9a0uQNNtZa_E",authDomain:"bkaapp-f61f4.firebaseapp.com",projectId:"bkaapp-f61f4",storageBucket:"bkaapp-f61f4.firebasestorage.app",messagingSenderId:"336720035886",appId:"1:336720035886:web:36fc6827c40ee030655fbf"};
 const COLLECTION='avisosBKA', DOC='estado', LOCAL='avisosBKA_estado';
 const root=document.getElementById('root');
 let avisos=[], cloud=null, modo='ver', editId=null, borrar=null, verAnteriores=false, error='';
