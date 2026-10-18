@@ -35,3 +35,8 @@ Archivos en `https://www.gymnastics.sport/publicdir/rules/files/` + nombre mostr
 - FMG (intranet, `Archivos/EventoConvocatoria/<ID>.pdf`): Campeonato Nacional GAF 2026 (ID 705) y 2023-2025 (220, 383, 570); Regionales R1-R5 2025 (616-620); cursos de jueces 2026 Obligatorios USAG / JO / Xcel (673, 678, 680); Congreso Técnico 2025 (640); Selectivo Mundial GAF 2025 (632); Juegos CDMX 2026 con pirámide y puntajes mínimos (656); copas y estatales 2025-2026; resultados Nacional 2024-2025.
 - Pirámide FMG GAF 2025 y Xcel 2025 (CTF dic-2024), extraída como imagen de una convocatoria.
 - **No públicos (pedirlos a la asociación):** Reglamento Técnico Nacional GAF, Programa Nacional GAF, Pirámide Nacional 2026, acuerdos del Congreso Técnico.
+
+## Criterios confirmados por Manu (18-oct-2026)
+- Olimpiada Nacional 14-15 años: solo FIG (Junior).
+- La FMG no modifica el código USAG en N9 y N10: se usa tal cual.
+- Sin confirmar (Manu no lo sabe): bono E +0.20 en N10 y qué salto cuenta en USAG (el editor toma el de mayor valor).
