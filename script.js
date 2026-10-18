@@ -8,7 +8,8 @@ const MODULES={
   normativos:'modulos/normativos/index.html',
   'plan-anual':'modulos/plan-anual/index.html',
   femenil:'modulos/femenil/index.html',
-  avisos:'modulos/avisos/index.html'
+  avisos:'modulos/avisos/index.html',
+  admin:'modulos/admin/index.html'
 };
 const viewer=document.getElementById('viewer');
 const frame=document.getElementById('frame');

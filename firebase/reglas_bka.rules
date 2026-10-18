@@ -1,0 +1,65 @@
+rules_version = '2';
+// Reglas de Firestore del proyecto BKA (bkaapp-f61f4). Se pegan completas en Firestore Database → Reglas → Publicar.
+// Ver: rutinas, avisos y calendario (cualquiera). Editar: usuario de BKA activo con el permiso.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function bkaFirmado() { return request.auth != null; }
+    function bkaPerfil() { return get(/databases/$(database)/documents/bkaUsuarios/$(request.auth.uid)).data; }
+    function bkaTiene(rol) {
+      return bkaFirmado()
+        && exists(/databases/$(database)/documents/bkaUsuarios/$(request.auth.uid))
+        && bkaPerfil().activo == true
+        && bkaPerfil().roles[rol] == true;
+    }
+
+    match /rutinasBKA/{doc}    { allow read: if true; allow write: if bkaTiene('rutinas'); }
+    match /rutinasFemBKA/{doc} { allow read: if true; allow write: if bkaTiene('rutinas'); }
+    match /avisosBKA/{doc}     { allow read: if true; allow write: if bkaTiene('avisos'); }
+    match /calendarioBKA/{doc} { allow read: if true; allow write: if bkaTiene('calendario'); }
+
+    // Administrador inicial: solo se puede crear una vez.
+    match /bkaConfig/admin {
+      allow read: if true;
+      allow create: if bkaFirmado() && request.resource.data.uid == request.auth.uid
+        && !exists(/databases/$(database)/documents/bkaConfig/admin);
+    }
+
+    // Usuarios: cada quien se crea a sí mismo con una invitación válida (o es el administrador inicial).
+    match /bkaUsuarios/{uid} {
+      allow read: if bkaFirmado() && (request.auth.uid == uid || bkaTiene('admin'));
+      allow create: if bkaFirmado() && request.auth.uid == uid && request.resource.data.activo == true && (
+        getAfter(/databases/$(database)/documents/bkaConfig/admin).data.uid == uid
+        || (
+          request.resource.data.invitacion is string
+          && get(/databases/$(database)/documents/bkaInvitaciones/$(request.resource.data.invitacion)).data.usada == false
+          && request.resource.data.roles == get(/databases/$(database)/documents/bkaInvitaciones/$(request.resource.data.invitacion)).data.roles
+          && getAfter(/databases/$(database)/documents/bkaInvitaciones/$(request.resource.data.invitacion)).data.usadaPor == uid
+        )
+      );
+      allow update, delete: if bkaTiene('admin');
+    }
+
+    // Códigos de invitación (el id es la huella del código; no se pueden listar sin ser administrador).
+    match /bkaInvitaciones/{id} {
+      allow get: if true;
+      allow list, create, delete: if bkaTiene('admin');
+      allow update: if bkaTiene('admin') || (
+        bkaFirmado() && resource.data.usada == false
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['usada', 'usadaPor', 'usadaEn'])
+        && request.resource.data.usada == true
+        && request.resource.data.usadaPor == request.auth.uid
+        && existsAfter(/databases/$(database)/documents/bkaUsuarios/$(request.auth.uid))
+      );
+    }
+
+    // Bitácora de accesos: cada quien escribe la suya; solo el administrador la lee.
+    match /bkaAccesos/{id} {
+      allow create: if bkaFirmado() && request.resource.data.uid == request.auth.uid;
+      allow update: if bkaFirmado() && resource.data.uid == request.auth.uid && request.resource.data.uid == request.auth.uid;
+      allow read: if bkaTiene('admin');
+    }
+
+    // Todo lo demás: cerrado.
+    match /{document=**} { allow read, write: if false; }
+  }
+}

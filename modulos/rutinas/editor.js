@@ -1,5 +1,5 @@
 /* BKA Rutinas (basado en AKC) – Editor con cálculo de NP (Código FIG 2025-2028, FMG N9/N10, USAG N7/N8) */
-const FB_CONFIG={apiKey:"AIzaSyBNRAkDXLlw5fyiT01-ZfUyB0A7ShsAxyg",authDomain:"akc-con-reporte.firebaseapp.com",projectId:"akc-con-reporte"};
+const FB_CONFIG={apiKey:"AIzaSyA3Zni5o3VV_Q3zIdWSnhi9a0uQNNtZa_E",authDomain:"bkaapp-f61f4.firebaseapp.com",projectId:"bkaapp-f61f4",storageBucket:"bkaapp-f61f4.firebasestorage.app",messagingSenderId:"336720035886",appId:"1:336720035886:web:36fc6827c40ee030655fbf"};
 const COLLECTION='rutinasBKA', DOC='estado', LOCAL='rutinasBKA_estado';
 const APS=[['PISO','Piso'],['ARZON','Arzón'],['ANILLOS','Anillos'],['SALTO','Salto'],['PARALELAS','Paralelas'],['FIJA','Fija']];
 const NP_COL={PISO:'PISO',ARZON:'ARZON',ANILLOS:'ANILLO',SALTO:'SALTO',PARALELAS:'PARALELA',FIJA:'FIJA'};
@@ -1147,15 +1147,6 @@ async function init(){
     const ae=document.activeElement?.tagName;if(ae!=='INPUT'&&ae!=='TEXTAREA'&&ae!=='SELECT')render();},e=>console.error(e));
   render();
 }
-const PASS_HASH='ba4ab977def42a7c486df8bc2b3986567ac496cb2f5e5e469fc4e40f64886c21';
-async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
-function gate(msg){
-  root.innerHTML=`<div class="top"><a class="back" href="index.html">← Rutinas</a><h1>Editor de rutinas</h1></div>
-  <form class="score gate" id="gate"><label>Contraseña<input id="pw" type="password" autocomplete="off" required></label>
-  ${msg?`<div class="badge b">${esc(msg)}</div>`:''}<button class="btn" type="submit">Entrar</button></form>`;
-  const f=document.getElementById('gate');document.getElementById('pw').focus();
-  f.addEventListener('submit',async e=>{e.preventDefault();
-    try{if(await sha256(document.getElementById('pw').value)===PASS_HASH){sessionStorage.setItem('bkaRutinasEditor','ok');init();}else gate('Contraseña incorrecta.');}
-    catch(err){gate('No se pudo validar la contraseña en este navegador.');}});
-}
-if(sessionStorage.getItem('bkaRutinasEditor')==='ok')init(); else gate('');
+// Editar rutinas pide usuario con permiso de rutinas (cliente/acceso.js).
+BKAAcceso.requiere('rutinas',{modulo:'Editor de rutinas GAV'}).then(init)
+  .catch(()=>{root.innerHTML=`<div class="top"><a class="back" href="index.html">← Rutinas</a><h1>Editor de rutinas</h1></div><div class="empty">Para editar rutinas necesitas tu usuario. Si no tienes, pide un código al administrador.</div>`;});

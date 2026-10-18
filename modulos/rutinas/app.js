@@ -9,7 +9,7 @@ async function loadOblRutinas(){
   try{ const r = await fetch('./obligatorios.json', {cache:'no-cache'}); if(r.ok) OBL_RUT = await r.json(); }
   catch(err){ console.error('No se pudo cargar obligatorios.json', err); }
 }
-const FB_CONFIG = {apiKey:"AIzaSyBNRAkDXLlw5fyiT01-ZfUyB0A7ShsAxyg",authDomain:"akc-con-reporte.firebaseapp.com",projectId:"akc-con-reporte"};
+const FB_CONFIG = {apiKey:"AIzaSyA3Zni5o3VV_Q3zIdWSnhi9a0uQNNtZa_E",authDomain:"bkaapp-f61f4.firebaseapp.com",projectId:"bkaapp-f61f4",storageBucket:"bkaapp-f61f4.firebasestorage.app",messagingSenderId:"336720035886",appId:"1:336720035886:web:36fc6827c40ee030655fbf"};
 const AP_ORDER = ['PISO','ARZON','ANILLOS','SALTO','PARALELAS','FIJA'];
 async function loadCloud(){
   try{
