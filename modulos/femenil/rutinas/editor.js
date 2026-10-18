@@ -333,7 +333,7 @@ function save(){try{localStorage.setItem(LOCAL,JSON.stringify(S));}catch(e){}
 /* ---------- vistas ---------- */
 function render(){ui.view==='list'?renderList():renderAthlete();}
 function renderList(){
-  let h=`<div class="top"><a class="back" href="../index.html">← GAF</a><h1>Rutinas femenil</h1><span class="sync ${syncState[0]}">${esc(syncState[1])}</span></div>`;
+  let h=`<div class="top"><a class="back" href="../index.html">← GAF</a><h1>Rutinas femenil</h1><button class="back" data-act="cuenta">Mi cuenta</button><span class="sync ${syncState[0]}">${esc(syncState[1])}</span></div>`;
   h+=`<div class="cards">`;
   for(const n of S.orden){const a=S.atletas[n];if(!a)continue;const t=totals(n);
     h+=`<button class="card" data-act="open" data-v="${esc(n)}"><div><b>${esc(n)}</b><span class="lv">${esc(nivTxt(a.nivel))}</span></div><span class="aa">${esUSAG(a.nivel)?f2(t.aa):f2(t.aa)}</span></button>`;}
@@ -461,6 +461,7 @@ root.addEventListener('click',e=>{
   if(b.tagName==='A')e.preventDefault();
   if(act==='open'){ui.atleta=b.dataset.v;ui.view='athlete';ui.ap='BARRAS';ui.open=-1;ui.q='';ui.del=-1;ui.delA=null;return render();}
   if(act==='list'){ui.view='list';ui.delA=null;return render();}
+  if(act==='cuenta')return BKAAcceso.cuenta();
   if(act==='addA'){const n=(document.getElementById('nn').value||'').trim().replace(/\s+/g,' ');const l=document.getElementById('nl').value;
     if(!n)return;if(S.atletas[n]){alert('Ya existe una atleta con ese nombre.');return;}
     S.atletas[n]={nivel:l,r:{SALTO:[],BARRAS:[],VIGA:[],PISO:[]},cr:{},sr:{},cc:{},p:{}};S.orden.push(n);save();ui.atleta=n;ui.view='athlete';ui.ap='BARRAS';return render();}
@@ -501,7 +502,7 @@ root.addEventListener('keydown',e=>{
 });
 
 /* ---------- inicio ---------- */
-(async function init(){
+async function init(){
   try{
     const get=f=>fetch('datos/'+f,{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(f);return r.json();});
     const [fig,us,usv,usr]=await Promise.all([get('elementos_fig_wag.json'),get('usag_elementos.json'),get('usag_saltos.json'),get('usag_reglas.json')]);
@@ -520,4 +521,7 @@ root.addEventListener('keydown',e=>{
     S={atletas:d.atletas||{},orden:d.orden||[]};for(const n of Object.keys(S.atletas)){const a=S.atletas[n];a.r=a.r||{};for(const[ap]of APS)a.r[ap]=a.r[ap]||[];a.cr=a.cr||{};a.sr=a.sr||{};a.cc=a.cc||{};a.p=a.p||{};}
     render();});
   render();
-})();
+}
+// Editar rutinas pide usuario con permiso de rutinas (cliente/acceso.js).
+BKAAcceso.requiere('rutinas',{modulo:'Editor de rutinas GAF'}).then(init)
+  .catch(()=>{root.innerHTML=`<div class="top"><a class="back" href="../index.html">← GAF</a><h1>Rutinas femenil</h1></div><div class="empty">Para editar rutinas necesitas tu usuario. Si no tienes, pide un código al administrador.</div>`;});
