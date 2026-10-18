@@ -2,21 +2,15 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>BKA · Edición de rutinas femenil</title>
-<link rel="stylesheet" href="../style.css">
+<title>BKA · Rutinas femenil</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="only light">
+<link rel="stylesheet" href="editor.css?v=2">
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
-<div id="app">
-  <a class="volver" href="../index.html">← Femenil</a>
-  <header class="topbar">
-    <div class="kicker" data-cliente-name>BKA</div>
-    <h1>EDICIÓN DE RUTINAS <span>FEMENIL</span></h1>
-  </header>
-  <!-- PENDIENTE: aquí va el código del editor de rutinas femenil que subirá Manu. -->
-  <div class="aviso"><b>Pendiente.</b> Aquí irá el editor de rutinas femenil.</div>
-</div>
-<script src="../../../cliente/config.js"></script>
-<script src="../../../cliente/theme.js"></script>
+<div id="ed"><div class="loading">Cargando códigos y rutinas…</div></div>
+<script src="editor.js?v=2"></script>
 </body>
 </html>
