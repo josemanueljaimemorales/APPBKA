@@ -26,4 +26,5 @@ Las reglas de BKA están en `firebase/reglas_bka.txt`.
 - La persona abre la parte que va a editar → "Es mi primera vez: tengo un código" → pone su nombre completo y crea su contraseña.
 - **Quién entró:** pestaña "Quién entró" (nombre, qué abrió, hora de entrada y de salida o última actividad).
 - **Bloquear / cambiar permisos:** pestaña Usuarios. Si alguien olvida su contraseña: bloquéalo y dale un código nuevo.
-- Contraseñas: mínimo 8 caracteres, con letras y números. Cada quien puede cambiar la suya en "Mi cuenta".
+- Contraseñas: mínimo 8 caracteres, con al menos una mayúscula y un número. Cada quien puede cambiar la suya en "Mi cuenta".
+- Administrador: solo Manu (el panel no permite dar permiso de administrador).

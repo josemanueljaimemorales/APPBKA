@@ -26,7 +26,8 @@ function render(){
         <div class="acc"><a class="btn" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">Enviar por WhatsApp</a><button class="btn ghost" data-act="copiar">Copiar mensaje</button><button class="btn ghost" data-act="otro">Dar otro acceso</button></div></div>`;
       root.innerHTML=h;root.dataset.txt=txt;return;}
     h+=`<form class="caja" id="fnuevo"><label>Nombre completo de la persona<input type="text" id="nn" required placeholder="Ej. Laura Gómez Pérez"></label>
-      <div class="roles">${Object.entries(ROLES).map(([k,l])=>`<label class="ck"><input type="checkbox" name="rol" value="${k}" ${k==='rutinas'?'checked':''}> ${l}</label>`).join('')}</div>
+      <div class="roles">${Object.entries(ROLES).filter(([k])=>k!=='admin').map(([k,l])=>`<label class="ck"><input type="checkbox" name="rol" value="${k}" ${k==='rutinas'?'checked':''}> ${l}</label>`).join('')}</div>
+      <small style="color:rgba(235,241,250,.6)">El administrador eres solo tú; este panel no da permiso de administrador.</small>
       <div class="barra"><span></span><button class="btn" type="submit">Generar código</button></div></form>`;
   }
   if(tab==='pend'){
@@ -35,7 +36,7 @@ function render(){
   }
   if(tab==='usuarios'){
     h+=usuarios.length?usuarios.map(u=>`<div class="item ${u.activo?'':'bloq'}"><b>${esc(u.nombre)}</b><small>${u.activo?'Activo':'Bloqueado'} · alta ${fecha(u.creado)}</small>
-      <div class="roles">${Object.entries(ROLES).map(([k,l])=>`<label><input type="checkbox" data-act="rol" data-uid="${u.uid}" data-rol="${k}" ${u.roles&&u.roles[k]?'checked':''} ${u.uid===yo.uid&&k==='admin'?'disabled':''}> ${l}</label>`).join('')}</div>
+      <div class="roles">${Object.entries(ROLES).filter(([k])=>k!=='admin'||u.uid===yo.uid).map(([k,l])=>`<label><input type="checkbox" data-act="rol" data-uid="${u.uid}" data-rol="${k}" ${u.roles&&u.roles[k]?'checked':''} ${k==='admin'?'disabled':''}> ${l}</label>`).join('')}</div>
       ${u.uid===yo.uid?'':`<div class="acc"><button class="btn ${u.activo?'rojo':''}" data-act="activo" data-uid="${u.uid}">${u.activo?'Bloquear':'Activar'}</button></div>`}</div>`).join(''):`<div class="vacio">Sin usuarios.</div>`;
     h+=`<small style="color:rgba(235,241,250,.6)">Si alguien olvida su contraseña: bloquea su usuario y dale un código nuevo.</small>`;
   }

@@ -18,7 +18,8 @@ const slug=n=>String(n||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''
 const correo=n=>slug(n)+DOMINIO;
 const limpiaCodigo=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
 async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
-function passOk(p){if(p.length<MIN_PASS)return`La contraseña debe tener al menos ${MIN_PASS} caracteres.`;if(!/[a-zA-Z]/.test(p)||!/\d/.test(p))return'La contraseña debe tener letras y números.';return'';}
+// Formato de contraseña (criterio de Manu): mínimo 8 caracteres, al menos una mayúscula y un número.
+function passOk(p){if(p.length<MIN_PASS)return`La contraseña debe tener al menos ${MIN_PASS} caracteres.`;if(!/[A-ZÁÉÍÓÚÑ]/.test(p))return'La contraseña debe tener al menos una letra mayúscula.';if(!/\d/.test(p))return'La contraseña debe tener al menos un número.';return'';}
 function msgError(e){const c=e&&e.code||'';
   if(c==='auth/operation-not-allowed'||c==='auth/configuration-not-found')return'El acceso con usuario y contraseña todavía no está activado en Firebase.';
   if(c==='auth/wrong-password'||c==='auth/user-not-found'||c==='auth/invalid-email'||c==='auth/invalid-login-credentials')return'Nombre o contraseña incorrectos.';
@@ -91,7 +92,7 @@ function pantallaCodigo(rol,msg,res,rej,cancelable,inv){
     <form id="f"><label>Código<input id="c" required placeholder="BKA-XXXX-XXXX" value="${esc(inv?inv.codigo:'')}"></label>
     ${inv?`<div class="ok">Código válido para: ${esc(inv.nombre)}</div>
       <label>Tu nombre completo (así entrarás)<input id="n" required value="${esc(inv.nombre)}"></label>
-      <label>Crea tu contraseña (mín. ${MIN_PASS} caracteres, con letras y números)<input id="p" type="password" autocomplete="new-password" required></label>
+      <label>Crea tu contraseña (mín. ${MIN_PASS} caracteres, con una mayúscula y un número)<input id="p" type="password" autocomplete="new-password" required></label>
       <label>Repite tu contraseña<input id="p2" type="password" autocomplete="new-password" required></label>`:''}
     ${msg?`<div class="err">${esc(msg)}</div>`:''}
     <div class="fila"><button type="button" class="sec" id="v">Volver</button><button class="pri">${inv?'Crear mi acceso':'Revisar código'}</button></div></form>`);
@@ -117,7 +118,7 @@ function pantallaCodigo(rol,msg,res,rej,cancelable,inv){
 function pantallaInicial(rol,msg,res,rej,cancelable){
   ventana(`<h2>Configuración inicial</h2><p>Solo se hace una vez: crea la cuenta del administrador (el que da los códigos y ve quién entra).</p>
     <form id="f"><label>Nombre completo<input id="n" required></label>
-    <label>Contraseña (mín. ${MIN_PASS} caracteres, con letras y números)<input id="p" type="password" autocomplete="new-password" required></label>
+    <label>Contraseña (mín. ${MIN_PASS} caracteres, con una mayúscula y un número)<input id="p" type="password" autocomplete="new-password" required></label>
     <label>Repite la contraseña<input id="p2" type="password" autocomplete="new-password" required></label>
     ${msg?`<div class="err">${esc(msg)}</div>`:''}
     <div class="fila"><button type="button" class="sec" id="v">Volver</button><button class="pri">Crear administrador</button></div></form>`);
@@ -138,7 +139,7 @@ function pantallaInicial(rol,msg,res,rej,cancelable){
 function pantallaCuenta(msg,okMsg){
   ventana(`<h2>Mi cuenta</h2><p>${esc(perfil?perfil.nombre:'')}</p>
     <form id="f"><label>Contraseña actual<input id="a" type="password" autocomplete="current-password" required></label>
-    <label>Contraseña nueva (mín. ${MIN_PASS}, letras y números)<input id="p" type="password" autocomplete="new-password" required></label>
+    <label>Contraseña nueva (mín. ${MIN_PASS}, una mayúscula y un número)<input id="p" type="password" autocomplete="new-password" required></label>
     <label>Repite la nueva<input id="p2" type="password" autocomplete="new-password" required></label>
     ${msg?`<div class="err">${esc(msg)}</div>`:''}${okMsg?`<div class="ok">${esc(okMsg)}</div>`:''}
     <div class="fila"><button type="button" class="sec" id="x">Cerrar</button><button class="pri">Cambiar contraseña</button></div></form>
