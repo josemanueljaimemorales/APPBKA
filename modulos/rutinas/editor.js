@@ -45,13 +45,16 @@ const bajaABraquial=r=>{const t=txt(r);return r.k==='PARALELAS|1|1'||/ (braq(uia
 // de un Kato o de un elemento que termina en braquial (ballestón, Felge a braquial, Moy a braquial, Healy…).
 // De un vuelo, de un L-sit o de una alemana no: habría contrabalanceo.
 // También después de un gigante o un Felge a manos (y los de su casilla): vienen de una vuelta completa;
-// y después del Tippelt, que termina con fuerza a la parada de manos (no es vuelo a manos).
+// y después del Tippelt, que termina con fuerza a la parada de manos (no es vuelo a manos), y del Diamidov.
 const VUELTA_COMPLETA=new Set(['PARALELAS|3|4','PARALELAS|3|21','PARALELAS|3|22','PARALELAS|3|29','PARALELAS|3|30','PARALELAS|3|42','PARALELAS|3|106','PARALELAS|3|107','PARALELAS|3|108','PARALELAS|3|114','PARALELAS|3|119','PARALELAS|3|130','PARALELAS|3|131']);
-const permiteBraquial=r=>{const t=txt(r);return !!r.pv||VUELTA_COMPLETA.has(r.k)||/ (gigante|tippelt|tippet|tipelt|giant swing|molino (atras )?(al|a) (ap|apoyo) inv|felge a manos|felge (al|a) (ap|apoyo) inv|felge to handstand|cucherat|celen) /.test(' '+nk(r.n||'')+' ')||/ (cambio|kato|change) /.test(t)||/ (a|al) (apoyo )?braq(uial)? | (to|al) (up(per)?\.? arm|upper arm hang|up arm) /.test(t);};
-const PV_OPC={medio:'Cambio (½ giro)',giro:'Giro completo',healy:'Healy',gatson:'Gatson',lsitkato:'L-sit y Kato'};
+const permiteBraquial=r=>{const t=txt(r);return (!!r.pv&&r.pv!=='vuelo')||VUELTA_COMPLETA.has(r.k)||/ (gigante|tippelt|tippet|tipelt|giant swing|molino (atras )?(al|a) (ap|apoyo) inv|felge a manos|felge (al|a) (ap|apoyo) inv|felge to handstand|cucherat|celen) /.test(' '+nk(r.n||'')+' ')||/ (cambio|kato|change|diamidov|diamidob) /.test(t)||/ (a|al) (apoyo )?braq(uial)? | (to|al) (up(per)?\.? arm|upper arm hang|up arm) /.test(t);};
+const PV_OPC={medio:'Cambio (½ giro)',giro:'Giro completo',healy:'Healy',gatson:'Gatson',lsitkato:'L-sit y Kato',vuelo:'Vuelo'};
+// Paralelas: elementos que terminan en L-sit (Felge al apoyo, alemana a L-sit, L-sit…) y lo que puede partir de ahí sin valor (criterio de Manu).
+const terminaEnL=r=>r.k==='PARALELAS|2|7'||r.k==='PARALELAS|3|116'||/ (l|l sit|lsit|l seat|escuadra) $/.test(' '+nk(r.n||'')+' ');
+const LV_OPC={kato:'Kato',balleston:'Ballestón',rusa:'Rusa',felge:'Felge'};
 // Barra fija: después de llegar a parada de manos (alemana/kip a manos) puede hacer un cambio sencillo sin valor y seguir a gigante.
 const FV_OPC={cs:'Cambio sencillo'};
-const PV_TXT=v=>PV_OPC[v]||FV_OPC[v]||'';
+const PV_TXT=v=>PV_OPC[v]||FV_OPC[v]||LV_OPC[v]||'';
 // Alemana / kip a parada de manos: por el nombre o por el elemento del Código (III.1, báscula de impulso al apoyo invertido).
 const kipAManos=r=>{if(r.k==='FIJA|3|1')return true;const t=txt(r);
   // Con giro (p. ej. dominación atrás con ½ giro = cambio sencillo) ya cambia de dirección: no cuenta.
@@ -453,7 +456,8 @@ function compute(ap,rows,nivel,plantada,opt){
       res.enotes.push(`Vuelo perdido: la salida de ${dobleAd?'doble ':''}mortal adelante ("${u.n}") debe venir de un impulso braquial, un Healy o un Moy directo; después de "${pr.n}" queda un balanceo vacío. -0.30 del jurado E.`);}
   if(ap==='PARALELAS'&&nivel!=='N7'&&nivel!=='N8')rows.forEach((a,i)=>{const b=rows[i+1];if(!b||a.ct)return;
     const nb=txt(b);
-    const aManos=(llegaAManos(a)||alemanaAtras(a))&&!a.pv;
+    // "Vuelo" sin valor sigue balanceando atrás: el siguiente elemento se revisa igual.
+    const aManos=(llegaAManos(a)||alemanaAtras(a))&&(!a.pv||a.pv==='vuelo');
     // La salida hacia atrás (último elemento) también va en contra del balanceo.
     const baja=/ (moy|tippelt|tippet|molino|gigante|kenmotsu|bhavsar|babsar|diamidov|diamidob|makuts|felge|peters) /.test(nb)||(i+1===rows.length-1&&/ atras /.test(nb)&&!/ adelante /.test(nb));
     // Con solo apodo (sin elemento del Código), "doble en C/V" en paralelas es la salida atrás.
@@ -461,7 +465,7 @@ function compute(ap,rows,nivel,plantada,opt){
     if(aManos&&salidaAtras)res.enotes.push(`Vuelo perdido / contrabalanceo: después de "${a.n}" (termina balanceando atrás) sale "${b.n}" hacia atrás, en contra del balanceo. Tendría que haber un cambio antes (½ giro, giro, Healy o Gatson; márcalo en "Después hace"). -0.30 del jurado E.`);
     else if(aManos&&baja)res.enotes.push(`Posible contrabalanceo: "${a.n}" y después "${b.n}". -0.30 del jurado E (después de llegar a manos o de una alemana, que terminan balanceando atrás, el siguiente elemento debe seguir en la misma dirección o ir precedido de un elemento de fuerza). Si después del vuelo hace un cambio, giro, Healy o Gatson sin capturarlo, márcalo en el elemento.`);});
   if(ap==='PARALELAS'&&nivel!=='N7'&&nivel!=='N8')rows.forEach((b,i)=>{const a=rows[i-1];if(!a||!bajaABraquial(b)||permiteBraquial(a))return;
-    res.enotes.push(`Contrabalanceo: "${b.n}" baja a braquial después de "${a.n}". A la braquial solo se llega de entrada, después de un cambio, de un Kato, de un gigante o Felge a manos (vuelta completa), de un Tippelt (fuerza a manos) o de un elemento que termina en braquial (ballestón, Felge a braquial…); de un vuelo, un L-sit o una alemana no. -0.30 del jurado E.`);});
+    res.enotes.push(`Contrabalanceo: "${b.n}" baja a braquial después de "${a.n}". A la braquial solo se llega de entrada, después de un cambio, de un Kato, de un gigante o Felge a manos (vuelta completa), de un Tippelt (fuerza a manos), de un Diamidov o de un elemento que termina en braquial (ballestón, Felge a braquial…); de un vuelo, un L-sit o una alemana no. -0.30 del jurado E.`);});
   const valued=items.filter(x=>x.val>0);
   const n7=nivel==='N7', n8=nivel==='N8', usag=n7||n8;
   let dis=null;
@@ -707,7 +711,8 @@ function editPanel(r,i,a,pot){
   if((ui.ap==='PISO'||ui.ap==='FIJA')&&i<rowsA.length-1&&(ui.ap!=='PISO'||r.c||viable)){const cur=(r.c&&r.cv!=null&&r.cv!=='')?String(r.cv):'';
     h+=`<label>Conexión manual con "${esc(rowsA[i+1].n)}"<select data-f="cvm" data-i="${i}"><option value="" ${cur===''?'selected':''}>No, solo según reglas</option><option value="0.1" ${cur==='0.1'?'selected':''}>Sí, 0.1</option><option value="0.2" ${cur==='0.2'?'selected':''}>Sí, 0.2</option></select></label>`;}
   if((ui.ap==='PISO'||ui.ap==='FIJA')&&!r.c&&r.nc&&(pot>0||viable)&&i<rowsA.length-1)h+=`<button class="btn ghost" data-act="relink" data-i="${i}">Conectar con "${esc(rowsA[i+1].n)}" (${pot>0?'+'+pot.toFixed(1):'sin bonificación'})</button>`;
-  if(ui.ap==='PARALELAS'&&(llegaAManos(r)||alemanaAtras(r)))h+=`<label>Después hace (sin valor)<select data-f="pv" data-i="${i}"><option value="" ${!r.pv?'selected':''}>Según el siguiente elemento</option>${Object.entries(PV_OPC).map(([k,t])=>`<option value="${k}" ${r.pv===k?'selected':''}>${t}</option>`).join('')}</select></label>`;
+  if(ui.ap==='PARALELAS'&&terminaEnL(r))h+=`<label>Después hace (sin valor)<select data-f="pv" data-i="${i}"><option value="" ${!r.pv?'selected':''}>Según el siguiente elemento</option>${Object.entries(LV_OPC).map(([k,t])=>`<option value="${k}" ${r.pv===k?'selected':''}>${t}</option>`).join('')}</select></label>`;
+  else if(ui.ap==='PARALELAS'&&(llegaAManos(r)||alemanaAtras(r)))h+=`<label>Después hace (sin valor)<select data-f="pv" data-i="${i}"><option value="" ${!r.pv?'selected':''}>Según el siguiente elemento</option>${Object.entries(PV_OPC).map(([k,t])=>`<option value="${k}" ${r.pv===k?'selected':''}>${t}</option>`).join('')}</select></label>`;
   if(ui.ap==='FIJA'&&r.g===2)h+=`<label>Al agarrar continúa con<select data-f="gig" data-i="${i}"><option value="" ${!r.gig?'selected':''}>Según el siguiente elemento</option><option value="gigante" ${r.gig==='gigante'?'selected':''}>Cae a gigante</option><option value="molino" ${r.gig==='molino'?'selected':''}>Cae a molino</option></select></label>`;
   if(ui.ap==='FIJA'&&kipAManos(r))h+=`<label>Después hace (sin valor)<select data-f="pv" data-i="${i}"><option value="" ${!r.pv?'selected':''}>Según el siguiente elemento</option>${Object.entries(FV_OPC).map(([k,t])=>`<option value="${k}" ${r.pv===k?'selected':''}>${t} y sigue a gigante</option>`).join('')}</select></label>`;
   if(ui.ap==='FIJA')h+=`<label class="opt"><input type="checkbox" data-f="ct" data-i="${i}" ${r.ct?'checked':''}> Después de este elemento hay cambio de toma (sin valor)</label>`;
