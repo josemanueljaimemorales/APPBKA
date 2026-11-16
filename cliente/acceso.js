@@ -9,7 +9,9 @@
 const FB_CONFIG={apiKey:"AIzaSyA3Zni5o3VV_Q3zIdWSnhi9a0uQNNtZa_E",authDomain:"bkaapp-f61f4.firebaseapp.com",projectId:"bkaapp-f61f4",storageBucket:"bkaapp-f61f4.firebasestorage.app",messagingSenderId:"336720035886",appId:"1:336720035886:web:36fc6827c40ee030655fbf"};
 const DOMINIO='@usuarios.bka-gimnasia.app';   // correo interno: nadie recibe correos, solo identifica al usuario
 const MIN_PASS=8;
-const ROLES={rutinas:'Editar rutinas',avisos:'Editar avisos',calendario:'Editar calendario',admin:'Administrador'};
+const ROLES={rutinas:'Editar rutinas',avisos:'Editar avisos',calendario:'Editar calendario',entrenador:'Herramientas del entrenador',admin:'Administrador'};
+// El administrador puede usar todo (también Herramientas del entrenador, aunque no tenga marcada la casilla).
+const tieneRol=(p,rol)=>!rol||!!(p&&p.roles&&(p.roles[rol]||p.roles.admin));
 let app,auth,db,perfil=null,acceso=null,latido=null;
 
 function fb(){if(app)return;app=firebase.apps.length?firebase.app():firebase.initializeApp(FB_CONFIG);auth=firebase.auth();db=firebase.firestore();}
@@ -80,7 +82,7 @@ async function despuesDeEntrar(rol,res,rej,cancelable){
   await cargaPerfil();
   if(!perfil){await auth.signOut();return pantallaEntrar(rol,'Este usuario no tiene perfil en BKA.',res,rej,cancelable);}
   if(perfil.activo!==true){await auth.signOut();perfil=null;return pantallaEntrar(rol,'Tu acceso está bloqueado. Habla con el administrador.',res,rej,cancelable);}
-  if(rol&&!(perfil.roles&&perfil.roles[rol])){
+  if(!tieneRol(perfil,rol)){
     ventana(`<h2>Sin permiso</h2><p>${esc(perfil.nombre)}, tu usuario no tiene permiso para: ${esc(ROLES[rol]||rol)}. Pídeselo al administrador.</p>
       <div class="fila"><button class="sec" id="s">Salir de mi usuario</button>${cancelable?'<button class="pri" id="x">Cerrar</button>':''}</div>`);
     capa.querySelector('#s').onclick=async()=>{await salir();pantallaEntrar(rol,'',res,rej,cancelable);};
@@ -160,7 +162,7 @@ function requiere(rol,op){op=op||{};fb();
   return new Promise((res,rej)=>{
     const listo=p=>{registraAcceso(op.modulo);res(p);};
     const un=auth.onAuthStateChanged(async u=>{un();
-      try{if(u){await cargaPerfil();if(perfil&&perfil.activo===true&&(!rol||(perfil.roles&&perfil.roles[rol])))return listo(perfil);}}catch(e){console.error(e);}
+      try{if(u){await cargaPerfil();if(perfil&&perfil.activo===true&&tieneRol(perfil,rol))return listo(perfil);}}catch(e){console.error(e);}
       pantallaEntrar(rol,'',listo,rej,op.cancelable!==false);});
   });}
 window.BKAAcceso={requiere,salir,cuenta:()=>{fb();if(perfil)pantallaCuenta();},perfil:()=>perfil,ROLES,sha256,limpiaCodigo,
