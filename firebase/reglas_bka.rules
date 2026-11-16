@@ -17,6 +17,8 @@ service cloud.firestore {
     match /avisosBKA/{doc}     { allow read: if true; allow write: if bkaTiene('avisos'); }
     match /calendarioBKA/{doc} { allow read: if true; allow write: if bkaTiene('calendario'); }
     // Herramientas del entrenador (all around): solo entrenadores y el administrador.
+    // Competencias (eficiencia por copa): todos ven; suben resultados y fotos los entrenadores y el administrador.
+    match /competenciasBKA/{doc} { allow read: if true; allow write: if bkaTiene('entrenador') || bkaTiene('admin'); }
     match /herramientasBKA/{doc} { allow read, write: if bkaTiene('entrenador') || bkaTiene('admin'); }
 
     // Administrador inicial: solo se puede crear una vez.
