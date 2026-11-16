@@ -10,7 +10,8 @@ const MODULES={
   femenil:'modulos/femenil/index.html',
   avisos:'modulos/avisos/index.html',
   admin:'modulos/admin/index.html',
-  herramientas:'modulos/herramientas/index.html'
+  herramientas:'modulos/herramientas/index.html',
+  eficientes:'modulos/eficientes/index.html'
 };
 const viewer=document.getElementById('viewer');
 const frame=document.getElementById('frame');
