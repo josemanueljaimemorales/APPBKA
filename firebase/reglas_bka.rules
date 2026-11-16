@@ -16,7 +16,6 @@ service cloud.firestore {
     match /rutinasFemBKA/{doc} { allow read: if true; allow write: if bkaTiene('rutinas'); }
     match /avisosBKA/{doc}     { allow read: if true; allow write: if bkaTiene('avisos'); }
     match /calendarioBKA/{doc} { allow read: if true; allow write: if bkaTiene('calendario'); }
-    // Herramientas del entrenador (all around): solo entrenadores y el administrador.
     // Normativos y Trabajo en desarrollo: todos ven (Trabajo en desarrollo lee Normativos); guardan entrenadores y administrador.
     match /normativosBKA/{doc} { allow read: if true; allow write: if bkaTiene('entrenador') || bkaTiene('admin'); }
     match /trainingBKA/{doc}   { allow read: if true; allow write: if bkaTiene('entrenador') || bkaTiene('admin'); }
@@ -24,6 +23,7 @@ service cloud.firestore {
     match /elementosBKA/{doc} { allow read, write: if bkaTiene('entrenador') || bkaTiene('admin'); }
     // Competencias (eficiencia por copa): todos ven; suben resultados y fotos los entrenadores y el administrador.
     match /competenciasBKA/{doc} { allow read: if true; allow write: if bkaTiene('entrenador') || bkaTiene('admin'); }
+    // Herramientas del entrenador (all around): solo entrenadores y el administrador.
     match /herramientasBKA/{doc} { allow read, write: if bkaTiene('entrenador') || bkaTiene('admin'); }
 
     // Administrador inicial: solo se puede crear una vez.
