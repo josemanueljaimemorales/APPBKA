@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#061426">
+<title>Elementos rojos y en proyección · BKA</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<div class="app" id="app">
+  <button type="button" class="volver" onclick="location.href='../herramientas/index.html'">← Herramientas</button>
+  <header class="topbar">
+    <div class="kicker">BKA · HERRAMIENTAS DEL ENTRENADOR</div>
+    <h1><span class="rojo">Elementos rojos</span> <small>y</small> <span class="verde">en proyección o nuevos</span></h1>
+    <p class="sub" id="sub"></p>
+  </header>
+  <div class="estado" id="estado" role="status">Cargando atletas…</div>
+  <main id="contenido"></main>
+</div>
+<div id="hoja" class="hoja" aria-hidden="true"></div>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+<script src="../../cliente/acceso.js?v=2"></script>
+<script src="../../cliente/config.js?v=1"></script>
+<script src="../../cliente/xlsx-reader.js?v=1"></script>
+<script src="../../cliente/normativos-datos.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
