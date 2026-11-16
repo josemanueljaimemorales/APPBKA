@@ -1,0 +1,93 @@
+/* Elementos rojos y en proyección o nuevos: mismos colores que Carga semanal; hoja de impresión a color */
+:root{--bg:#040b15;--panel:rgba(8,22,39,.94);--line:rgba(104,176,255,.18);--text:#f3f8ff;--muted:#8ea6be;--rojo:#ff4d4f;--verde:#22c55e;--blue:#2f9bff}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:radial-gradient(circle at 50% -10%,#12385d 0,#081a2d 32%,#040b15 72%);min-height:100dvh;padding:16px}
+.app{width:min(1100px,100%);margin:auto}
+button{font-family:inherit;cursor:pointer}
+.volver,.atras{border:1px solid var(--line);background:rgba(8,19,31,.86);color:#fff;border-radius:12px;padding:8px 14px;font-weight:700;font-size:14px}
+.topbar{padding:14px 0 6px}
+.kicker{font-size:11px;letter-spacing:.22em;color:var(--muted)}
+.topbar h1{margin:6px 0 4px;font-size:clamp(22px,5.4vw,38px);line-height:1.15;font-weight:900}
+.topbar h1 small{font-size:.6em;color:var(--muted);font-weight:700}
+.rojo{color:var(--rojo)}.verde{color:var(--verde)}
+.sub{margin:0;color:var(--muted);font-size:14px}
+.estado{min-height:20px;margin:8px 0;font-size:13px;color:var(--muted)}
+.estado.ok{color:#7ee2a0}.estado.err{color:#ff8a80}
+.vacio{padding:22px;border-radius:18px;background:var(--panel);border:1px solid var(--line);text-align:center;color:var(--muted)}
+.barra{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.imprimir.grupo-btn{background:linear-gradient(135deg,#2f9bff,#8b5cf6)}
+.imprimir{border:0;border-radius:14px;padding:12px 18px;font-weight:900;font-size:15px;color:#fff;background:linear-gradient(135deg,#ff4d4f,#f59e0b 50%,#22c55e);box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.grupo{margin:18px 0 8px;font-size:15px;letter-spacing:.12em;color:var(--g);display:flex;align-items:center;gap:10px}
+.grupo::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--g),transparent)}
+.atletas{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.atleta{text-align:left;color:#fff;border:1px solid var(--line);border-left:5px solid var(--g);border-radius:16px;background:var(--panel);padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+.atleta b{font-size:15px}.atleta small{color:var(--muted);font-size:12px}
+.cuentas{display:flex;gap:12px;margin-top:6px;font-weight:800;font-size:14px}
+.c-rojo{color:#ff8587}.c-verde{color:#6ee79a}
+.cab-atleta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:10px 0 14px;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--g) 30%,transparent),rgba(8,22,39,.9));border:1px solid var(--line)}
+.cab-atleta h2{margin:0;font-size:22px}.cab-atleta small{color:#cfe0f1}
+.copiar{margin:0 0 14px;padding:12px 14px;border-radius:16px;background:var(--panel);border:1px dashed var(--line)}
+.copiar label{display:block;font-size:13px;font-weight:800;margin-bottom:8px}
+.copiar div{display:flex;gap:8px}
+.copiar select{flex:1;min-width:0;border:1px solid var(--line);background:#06101c;color:#fff;border-radius:10px;padding:9px 10px;font-size:16px}
+.copiar button{border:0;border-radius:10px;padding:0 16px;font-weight:800;color:#fff;background:var(--blue)}
+.aparatos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.aparato{border-radius:18px;background:var(--panel);border:1px solid var(--line);border-top:5px solid var(--a);padding:12px 14px;box-shadow:0 14px 34px rgba(0,0,0,.3)}
+.aparato h3{margin:0 0 8px;font-size:18px;color:var(--a);letter-spacing:.05em;text-transform:uppercase}
+.bloque{margin-top:8px}
+.bloque h4{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+.bloque h4 span{color:var(--muted);font-weight:700}
+.bloque ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.bloque li{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;font-weight:700;font-size:14px;overflow-wrap:anywhere}
+.bloque li span.txt{flex:1;min-width:0}
+.mover{flex:none;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;font-size:20px;line-height:1;color:var(--muted);padding:4px 6px;margin:-4px 0 -4px -4px;border-radius:8px}
+.mover:active{cursor:grabbing}
+.bloque li.arrastrando{opacity:.9;outline:2px dashed rgba(255,255,255,.55);box-shadow:0 10px 24px rgba(0,0,0,.45);transform:scale(1.02)}
+.rojos li{background:rgba(255,77,79,.16);border-left:4px solid var(--rojo)}
+.proy li{background:rgba(34,197,94,.15);border-left:4px solid var(--verde)}
+.bloque li.nada{background:transparent;border-left:0;color:var(--muted);font-weight:500;padding:2px 0}
+.quitar{border:0;background:rgba(0,0,0,.25);color:#fff;border-radius:8px;width:30px;height:30px;font-size:14px;flex:none}
+.agregar{display:flex;gap:6px;margin-top:6px}
+.agregar input{flex:1;min-width:0;border:1px solid var(--line);background:#06101c;color:#fff;border-radius:10px;padding:9px 10px;font-size:16px}
+.agregar button{border:0;border-radius:10px;width:42px;font-size:20px;font-weight:900;color:#fff}
+.rojos .agregar button{background:var(--rojo)}.proy .agregar button{background:var(--verde)}
+
+/* Hoja de impresión: oculta en pantalla; se mide fuera de la vista antes de imprimir */
+.hoja{display:none}
+.hoja.midiendo{display:block;position:absolute;left:-20000px;top:0}
+.hoja .contenido{background:#fff;color:#0f172a;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif}
+.hoja thead{display:table-header-group}
+.hoja tr{break-inside:avoid;page-break-inside:avoid}
+.hoja tr.cab td{padding:0 0 8px;border:0;box-shadow:none;background:#fff!important}
+.contenido{width:754px}
+.h-cab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:12px;color:#fff;background:linear-gradient(120deg,#061a33,#0b4a8a 55%,#0b6b4a);margin-bottom:8px;font-size:11px}
+.h-cab h1{margin:0;font-size:19px;line-height:1.15;font-weight:900;color:#fff;text-align:center}
+.h-cab .rojo{color:#ff8a8a}.h-cab .verde{color:#7ef0a8}
+.h-cab h1 small{display:block;margin-top:2px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#cfe3f8}
+.hoja td.h-grupo b{font-size:20px}
+.h-der{text-align:right}
+.ley{margin-top:4px;display:flex;gap:6px;align-items:center;justify-content:flex-end}
+.ley i{display:inline-block;width:12px;height:12px;border-radius:3px}.ley i.r{background:#e53935}.ley i.v{background:#16a34a}
+.hoja table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:10.5px}
+.hoja th{background:var(--a,#0b2a4a);color:#fff;padding:6px 2px;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;border-radius:8px 8px 0 0}
+.hoja th.h-at{width:118px;background:#0b2a4a}
+/* Cada atleta separado del siguiente: raya oscura con una sombra suave y filas alternadas en dos tonos (José Manuel, 26-oct-2026) */
+.hoja td{vertical-align:top;padding:5px 4px;border-bottom:2px solid #7d8ea3;box-shadow:inset 0 -5px 5px -5px rgba(15,23,42,.45);border-left:3px solid color-mix(in srgb,var(--a,#ccc) 35%,#fff)}
+.hoja tbody tr:nth-child(odd) td{background:#fff}
+.hoja tbody tr:nth-child(even) td{background:#e6edf6}
+.hoja td.h-at{border-left:7px solid var(--g);vertical-align:middle;padding:6px 6px}
+.hoja td.h-at b{display:block;font-size:15.5px;line-height:1.1;font-weight:900;color:#0b1b30;overflow-wrap:break-word;hyphens:auto}.hoja td.h-at small{display:block;margin-top:3px;color:#475569;font-size:10px;font-weight:700}
+.hoja td.cel{line-height:0}
+.ch{display:inline-block;max-width:100%;margin:0 3px 3px 0;padding:3px 6px;border-radius:5px;font-weight:700;line-height:1.15;overflow-wrap:break-word;hyphens:auto;vertical-align:top}
+.ch.r{background:#ffe3e3;color:#9b1c1c;border-left:4px solid #e53935}
+.ch.v{background:#dcfce7;color:#14532d;border-left:4px solid #16a34a}
+.hoja .nada{color:#b6c2d1;line-height:1.2}
+
+@page{size:letter portrait;margin:8mm}
+@media print{
+  html,body{background:#fff!important;padding:0;min-height:0}
+  .app{display:none!important}
+  .hoja{display:block;position:static}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}

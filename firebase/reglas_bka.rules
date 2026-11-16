@@ -20,6 +20,8 @@ service cloud.firestore {
     // Normativos y Trabajo en desarrollo: todos ven (Trabajo en desarrollo lee Normativos); guardan entrenadores y administrador.
     match /normativosBKA/{doc} { allow read: if true; allow write: if bkaTiene('entrenador') || bkaTiene('admin'); }
     match /trainingBKA/{doc}   { allow read: if true; allow write: if bkaTiene('entrenador') || bkaTiene('admin'); }
+    // Elementos rojos y en proyección: solo entrenadores y administrador.
+    match /elementosBKA/{doc} { allow read, write: if bkaTiene('entrenador') || bkaTiene('admin'); }
     // Competencias (eficiencia por copa): todos ven; suben resultados y fotos los entrenadores y el administrador.
     match /competenciasBKA/{doc} { allow read: if true; allow write: if bkaTiene('entrenador') || bkaTiene('admin'); }
     match /herramientasBKA/{doc} { allow read, write: if bkaTiene('entrenador') || bkaTiene('admin'); }
