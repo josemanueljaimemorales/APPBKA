@@ -46,6 +46,7 @@ function render(){
   root.innerHTML=h;
 }
 root.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;const act=b.dataset.act;msg='';
+  if(act==='rol')return;  // las casillas de permisos se guardan en 'change'; si aquí se redibuja, la casilla se pierde antes de guardar
   if(act==='tab'){tab=b.dataset.v;nuevo=null;return render();}
   if(act==='cuenta')return BKAAcceso.cuenta();
   if(act==='otro'){nuevo=null;return render();}
